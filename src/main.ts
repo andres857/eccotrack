@@ -12,6 +12,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     httpsOptions,
   });
+  app.enableCors({
+    origin: 'http://147.182.191.38:5173',
+  });
   await app.listen(3000);
 }
 bootstrap();
