@@ -3,6 +3,14 @@ import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 export type messageDocument = HydratedDocument<Message>;
 
+interface ComputedLocation {
+  lat: number;
+  lng: number;
+  radius: number;
+  source: number;
+  status: number;
+}
+
 @Schema({ timestamps: true })
 export class Message {
   @Prop()
@@ -18,7 +26,7 @@ export class Message {
   data: string;
 
   @Prop({ type: MongooseSchema.Types.Mixed })
-  computedLocation: any;
+  computedLocation: ComputedLocation;
 }
 
 export const messageSchema = SchemaFactory.createForClass(Message);

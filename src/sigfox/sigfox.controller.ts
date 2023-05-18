@@ -97,8 +97,6 @@ export class SigfoxController {
       seqNumber: Number(seqNumber),
       ...payload,
     };
-    console.log('Payload:', payloadMessage);
-
     const newMessage = await this.sigFoxService.saveDataFromCallBack(payloadMessage);
     return newMessage;
   }
