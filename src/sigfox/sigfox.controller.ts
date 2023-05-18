@@ -1,9 +1,12 @@
 require('dotenv').config();
-import { Get, Controller, Post, Query, Param, Body} from '@nestjs/common';
 import axios from 'axios';
+import { Get, Controller, Post, Query, Param, Body} from '@nestjs/common';
+import { SigfoxService } from './sigfox.service'
 
 @Controller('sigfox')
 export class SigfoxController {
+  constructor( private sigFoxService: SigfoxService){}
+
   @Get('devices')
   async getDevices() {
     const userApi = process.env.USERNAME;
@@ -88,10 +91,15 @@ export class SigfoxController {
   }
 
   @Post('callback')
-  handleSigfoxCallback( @Body() data: any): string {
-    console.log('Datos recibidos de Sigfox:', data);
-    // Procesa los datos recibidos aquí y guarda en tu base de datos si es necesario.
-    // Devuelve una respuesta de éxito.
-    return 'OK';
+  async handleSigfoxCallback( @Body() payload: any, @Query('time') time: any, @Query('seqNumber') seqNumber: any) {
+    const payloadMessage = {
+      time: Number(time),
+      seqNumber: Number(seqNumber),
+      ...payload,
+    };
+    console.log('Payload:', payloadMessage);
+
+    const newMessage = await this.sigFoxService.saveDataFromCallBack(payloadMessage);
+    return newMessage;
   }
 }

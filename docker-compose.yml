@@ -1,0 +1,13 @@
+version: "3.9"
+services: 
+  ecco-app:
+    build: .
+    command: npm run start:dev
+    restart: always
+    # environment:
+    #   NODE_ENV: ${NODE_ENV}
+    volumes:
+      - ./:/usr/src/app
+      - ./node_modules:/usr/src/app/node_modules
+    ports:
+      - 3000:3000

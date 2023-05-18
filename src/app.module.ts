@@ -5,7 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SigfoxController } from './sigfox/sigfox.controller';
 import { SigfoxModule } from './sigfox/sigfox.module';
 import { DevicesController } from './devices/devices.controller';
 import { DevicesService } from './devices/devices.service';
@@ -45,7 +44,7 @@ import { ClientsModule } from './clients/clients.module';
       inject: [ConfigService],
     }),
     SigfoxModule, DevicesModule, UsersModule, LocationsModule, MessagesModule, EventsModule, ClientsModule],
-  controllers: [AppController, SigfoxController, DevicesController, LocationsController, EventsController],
+  controllers: [AppController, DevicesController, LocationsController, EventsController],
   providers: [AppService, DevicesService, LocationsService, EventsService],
 })
 export class AppModule {}

@@ -7,7 +7,7 @@ import {messageDocument, Message} from './schema/message.schema'
 export class MessagesService {
     constructor(@InjectModel(Message.name) private messageModel:Model<messageDocument>){}
 
-    async create(payload: any) {
+    async create(payload: any) {        
         const data = await this.messageModel.create(payload);
         console.log(data);
         return data;

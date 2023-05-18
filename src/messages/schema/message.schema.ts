@@ -7,10 +7,13 @@ export type messageDocument = HydratedDocument<Message>;
 export class Message {
   @Prop()
   device: string;
-
-  @Prop()
-  deviceId: string;
   
+  @Prop()
+  time: number;
+  
+  @Prop()
+  seqNumber: number;
+
   @Prop()
   data: string;
 
