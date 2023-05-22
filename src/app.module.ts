@@ -6,8 +6,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SigfoxModule } from './sigfox/sigfox.module';
-import { DevicesController } from './devices/devices.controller';
-import { DevicesService } from './devices/devices.service';
 import { DevicesModule } from './devices/devices.module';
 import { UsersModule } from './users/users.module';
 import { LocationsController } from './locations/locations.controller';
@@ -44,7 +42,7 @@ import { ClientsModule } from './clients/clients.module';
       inject: [ConfigService],
     }),
     SigfoxModule, DevicesModule, UsersModule, LocationsModule, MessagesModule, EventsModule, ClientsModule],
-  controllers: [AppController, DevicesController, LocationsController, EventsController],
-  providers: [AppService, DevicesService, LocationsService, EventsService],
+  controllers: [AppController, LocationsController, EventsController],
+  providers: [AppService, LocationsService, EventsService],
 })
 export class AppModule {}

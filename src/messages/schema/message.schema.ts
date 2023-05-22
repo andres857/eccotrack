@@ -23,6 +23,21 @@ export class Message {
   seqNumber: number;
 
   @Prop()
+  lqi: string;
+  
+  @Prop()
+  linkQuality: string;
+
+  @Prop()
+  operatorName: string;
+
+  @Prop()
+  countryCode: string;
+
+  @Prop()
+  deviceTypeId: string;
+
+  @Prop()
   data: string;
 
   @Prop({ type: MongooseSchema.Types.Mixed })

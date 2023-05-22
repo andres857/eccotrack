@@ -1,13 +1,13 @@
-import { Controller,Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import {MessagesService} from './messages.service'
 
-@Controller('messages')
+@Controller('/api/messages')
 export class MessagesController {
     constructor( private messageService: MessagesService ){}
     
-    @Post()
-    create(@Body() payload: any){
-        const newClient = this.messageService.create(payload)
-        return newClient
+    @Get(':idDevice')
+    async getMessagesByIdDevice( @Param('idDevice') idDevice: string){        
+        const messages = await this.messageService.getMessagesByIdDevice(idDevice);
+        return messages
     }
 }

@@ -8,7 +8,7 @@ import { MessagesModule } from '../messages/messages.module'
     MessagesModule
   ],
   controllers: [ SigfoxController ],
-  providers: [ SigfoxService ]
-
+  providers: [ SigfoxService ],
+  exports: [ SigfoxService ]
 })
 export class SigfoxModule {}
