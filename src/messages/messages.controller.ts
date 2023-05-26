@@ -8,6 +8,6 @@ export class MessagesController {
     @Get(':idDevice')
     async getMessagesByIdDevice( @Param('idDevice') idDevice: string){        
         const messages = await this.messageService.getMessagesByIdDevice(idDevice);
-        return messages
+        return messages;
     }
 }

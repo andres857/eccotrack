@@ -22,20 +22,36 @@ export class DevicesService {
         const existingDevice = await this.deviceModel.findOne({ id: idDevice }).exec();
         return !!existingDevice;
     }
+    async updateLastSeenOnDevices(payload){
+        const exist = await this.deviceExist(payload.device);
+        if (exist){
+            await this.deviceModel.updateOne({
+                id: payload.device
+            },{
+                $set:{
+                    lastComputedLocation: payload.computedLocation
+                }
+            })
+        }
+    }
     async updateDevice(device){        
         const exist = await this.deviceExist(device.id);
         if (!exist){
             return await this.deviceModel.create(device);
         }
     }
-    async updateDevices(){
+    async updateListDevices(){
         const { data } = await this.getDevicesSigFox();
-        let devicesAdd = [];
-        await Promise.all( data.map(async device =>{
-             const deviceAdd = await this.updateDevice( device );
-             devicesAdd.push(deviceAdd);
-        }))
-        return devicesAdd;
+        const devices = await this.getDevices();
+
+        if (data.length !== devices.length){
+            await Promise.all( data.map(async device =>{
+                await this.updateDevice( device );
+            }))
+            return await this.getDevices();
+        }else{
+            return ''
+        }
     }
     async messageById(id){
         return await this.sigFoxService.getMessageByIdDevice(id);

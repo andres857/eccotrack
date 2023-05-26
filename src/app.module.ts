@@ -16,6 +16,8 @@ import { EventsController } from './events/events.controller';
 import { EventsService } from './events/events.service';
 import { EventsModule } from './events/events.module';
 import { ClientsModule } from './clients/clients.module';
+import { SharedModule } from './shared-module/shared-module.module';
+import { VoltModule } from './volt/volt.module';
 
 
 @Module({
@@ -41,8 +43,25 @@ import { ClientsModule } from './clients/clients.module';
       },
       inject: [ConfigService],
     }),
-    SigfoxModule, DevicesModule, UsersModule, LocationsModule, MessagesModule, EventsModule, ClientsModule],
-  controllers: [AppController, LocationsController, EventsController],
-  providers: [AppService, LocationsService, EventsService],
+    SigfoxModule, 
+    DevicesModule, 
+    UsersModule, 
+    LocationsModule, 
+    MessagesModule, 
+    EventsModule, 
+    ClientsModule, 
+    SharedModule, 
+    VoltModule
+  ],
+  controllers: [
+    AppController, 
+    LocationsController, 
+    EventsController
+  ],
+  providers: [
+    AppService, 
+    LocationsService, 
+    EventsService
+  ],
 })
 export class AppModule {}

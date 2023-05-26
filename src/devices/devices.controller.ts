@@ -1,4 +1,4 @@
-import { Controller, Get, Query,Param } from '@nestjs/common';
+import { Controller, Get, Query,Param, Put } from '@nestjs/common';
 import { DevicesService } from './devices.service';
 
 @Controller('/api/devices')
@@ -15,9 +15,9 @@ export class DevicesController {
     async getAllDevices(){
         return await this.devicesService.getDevices();
     }
-    @Get('update')
+    @Put('update')
     async updateDevicesFromSigFox(){
-        const devices = await this.devicesService.updateDevices();
+        const devices = await this.devicesService.updateListDevices();
         return devices;
     }
     @Get(':id')
