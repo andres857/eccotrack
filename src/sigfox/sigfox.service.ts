@@ -55,7 +55,7 @@ export class SigfoxService {
         console.log('data-update');
         console.log(dataUpdate);
         console.log('data-update/');
-        
+            
         return newMessage;
     }
 

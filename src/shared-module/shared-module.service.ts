@@ -11,15 +11,15 @@ export class SharedService {
 
   async updateLastSeenOnDevices(payload){
     const existingDevice = await this.deviceModel.findOne({ id: payload.device }).exec();
-    console.log('---------------');
+    console.log('------updateTime---------');
     console.log(existingDevice);
-    console.log('---------------');
+    console.log('-------updateTime--------');
     if (existingDevice){
       const dataUpdated = await this.deviceModel.updateOne(
         { id: payload.device },
         { $set: { 
           lastComputedLocation: payload.computedLocation,
-          lastCom: payload.time
+          lastCom: payload.time * 1000
           }
         },
       );

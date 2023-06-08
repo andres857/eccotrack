@@ -9,10 +9,10 @@ export class Volt {
   id: string;
   
   @Prop()
-  time: number;
+  time: string;
   
   @Prop()
-  seqNumber: number;
+  seqNumber: string;
   
   @Prop()
   data: string;

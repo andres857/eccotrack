@@ -24,17 +24,25 @@ export class SigfoxController {
   }
   @Post('volt/callback')
   async handleSigfoxVoltCallback( 
-      @Query('id') id: string, 
-      @Query('time') time: string,
-      @Query('data') data: string,
-      @Query('seqNumber') seqNumber: string,
+      @Query('id') id: any, 
+      @Query('time') time: any,
+      @Query('data') data: any,
+      @Query('seqNumber') seqNumber: any,
     ) {
+      console.log('++++++++++++++++++++');
+      console.log(id,time,data, seqNumber);
+      console.log('++++++++++++++++++++++++');
+      
     const payloadMessage = {
       id: id,
-      time: Number(time),
-      seqNumber: Number(seqNumber),
+      time: time,
+      seqNumber: seqNumber,
       data: data
     };
+    console.log('-----------');
+    console.log(payloadMessage);
+    console.log('-----------');
+
     const newMessage = await this.sigFoxService.saveDataFromCallBackVolt(payloadMessage);
     return newMessage;
   }
