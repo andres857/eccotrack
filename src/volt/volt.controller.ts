@@ -1,4 +1,6 @@
-import { Controller } from '@nestjs/common';
+import { Controller,Post, Query, Body, Get, Param } from '@nestjs/common';
 
-@Controller('volt')
-export class VoltController {}
+@Controller('sigfox/volt')
+export class VoltController {
+
+}

@@ -5,11 +5,27 @@ import { DevicesService } from './devices.service';
 export class DevicesController {
     constructor( private devicesService: DevicesService ){}
     
-    // @Get()
-    // async getAllDevicesFromSigFox(){
-    //     const devices = await this.devicesService.getDevicesSigFox();
-    //     return devices.data;
-    // }
+    @Get('shop-online')
+    async getShopOnlineDevices(){
+        const { data } = await this.devicesService.getShopOnlineDevices();
+        return data;
+    }
+    @Get('shop-online/messages/:id')
+    async getShopOnlineMessages(@Param('id') id:string){
+        const messages = await this.devicesService.getShopOnlineMessages(id);
+        return messages;
+    }
+    @Get('equal')
+    async getEqualDevices(){
+        const { data } = await this.devicesService.getEqualDevices(); 
+        return data;
+    }
+    @Get('equal/messages/:id')
+    async getEqualMessages(@Param('id') id:string){
+        const messages = await this.devicesService.getEqualMessages(id);
+        return messages;
+    }
+
 
     @Get()
     async getAllDevices(){

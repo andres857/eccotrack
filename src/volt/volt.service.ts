@@ -7,8 +7,9 @@ import { voltDocument, Volt } from './schema/volt.schema';
 export class VoltService {
     constructor( @InjectModel(Volt.name) private messageModel:Model<voltDocument>){}
 
-    async create(payload: any) {   
-        console.log(payload);
+    async create( payload: any ) {   
+        console.log( payload );
         return await this.messageModel.create(payload);
     }
+    
 }

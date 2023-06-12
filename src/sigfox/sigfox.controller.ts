@@ -12,6 +12,25 @@ export class SigfoxController {
     return location;
   }
 
+  // equal volts
+  @Get('/devices/equal')
+  async geteletecno(){
+    const { data } = await this.sigFoxService.getDevicesEqual();
+    return data;
+  }
+// shop-online volts
+  @Get('/devices/shop-online')
+  async getVolts(){
+    const { data } = await this.sigFoxService.getDevicesShopOnline();
+    return data;
+  }
+
+  // @Get('/type/volt/devicetype')
+  // async getdeviceType(){
+  //   const { data } = await this.sigFoxService.getDeviceTypes();
+  //   return data;
+  // }
+
   @Post('callback')
   async handleSigfoxCallback( @Body() payload: any, @Query('time') time: any, @Query('seqNumber') seqNumber: any) {
     const payloadMessage = {

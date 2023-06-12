@@ -9,6 +9,10 @@ import { VoltService } from 'src/volt/volt.service';
 export class SigfoxService {
     private userSigFox: string;
     private passSigfox: string;
+    private userSigFoxVOLT: string;
+    private passSigfoxVOLT: string;
+    private userSigFoxEQUAL: string;
+    private passSigfoxEQUAL: string;
 
     constructor( 
         private messageService: MessagesService,
@@ -17,26 +21,106 @@ export class SigfoxService {
     ){
         this.userSigFox = process.env.USERNAME;
         this.passSigfox = process.env.PASSWORD;
+        this.userSigFoxVOLT = process.env.USERNAMEVOLT;
+        this.passSigfoxVOLT = process.env.PASSWORDVOLT;
+        this.userSigFoxEQUAL = process.env.USERNAMEEQUAL;
+        this.passSigfoxEQUAL = process.env.PASSWORDEQUAL;
     }
-    //get all devices 
+    // DEVICES TYPE - VOLT equal
+    async getDevicesEqual(){
+        try {
+            return await axios.get('https://api.sigfox.com/v2/devices', {
+                auth:{
+                    username: this.userSigFoxEQUAL,
+                    password: this.passSigfoxEQUAL,
+                }
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    async getMessageEqual(id){
+        try {
+            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
+                auth:{
+                    username: this.userSigFoxEQUAL,
+                    password: this.passSigfoxEQUAL,
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    // DEVICES TYPE - VOLT shop-online
+    async getDevicesShopOnline(){
+        try {
+            return await axios.get('https://api.sigfox.com/v2/devices', {
+                auth:{
+                    username: this.userSigFoxVOLT,
+                    password: this.passSigfoxVOLT,
+                }
+            });
+        } catch (error) {
+            console.log('hola mundo');
+            console.error(error);
+        }
+    }
+    async getMessageShopOnline(id){
+        try {
+            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
+                auth:{
+                    username: this.userSigFoxVOLT,
+                    password: this.passSigfoxVOLT,
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // async getDeviceTypes(){
+    //     try {
+    //         return await axios.get(`https://api.sigfox.com/v2/device-types`, {
+    //             auth:{
+    //                 username: this.userSigFoxVOLT,
+    //                 password: this.passSigfoxVOLT,
+    //             }
+    //         });
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
+
+    //get all devices Eccotrack
     async getAll(){
-        const devices = await axios.get('https://api.sigfox.com/v2/devices', {
-            auth:{
-                username: this.userSigFox,
-                password: this.passSigfox,
-            }
-        })
-        return devices.data;
+        try {
+            return await axios.get('https://api.sigfox.com/v2/devices', {
+                auth:{
+                    username: this.userSigFox,
+                    password: this.passSigfox,
+                }
+            });
+        } catch (error) {
+            console.log('hola mundo');
+            console.error(error);
+        }
     }
+
     async getLocationByIdDevice(id){
-        const location = await axios.get(`https://api.sigfox.com/v2/devices/${id}/locations`, {
-            auth: {
-              username: this.userSigFox,
-              password: this.passSigfox
-            },
-          });
-        return location.data;
+        try {
+            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/locations`, {
+                auth: {
+                  username: this.userSigFox,
+                  password: this.passSigfox
+                },
+              });
+        } catch (error) {
+            console.log('hoal das');
+            console.log(error);      
+        }
+
     }
+
     async getMessageByIdDevice(id){
         const message = await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
             auth:{
