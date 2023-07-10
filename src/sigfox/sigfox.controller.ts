@@ -1,5 +1,6 @@
 require('dotenv').config();
-import { Controller,Post, Query, Body, Get, Param} from '@nestjs/common';
+import { Controller,Post, Query, Body, Get, Param, Req} from '@nestjs/common';
+import { Request } from 'express';
 import { SigfoxService } from './sigfox.service'
 
 @Controller('sigfox')
@@ -31,6 +32,7 @@ export class SigfoxController {
   //   return data;
   // }
 
+// acciona devices
   @Post('callback')
   async handleSigfoxCallback( @Body() payload: any, @Query('time') time: any, @Query('seqNumber') seqNumber: any) {
     const payloadMessage = {
@@ -41,28 +43,75 @@ export class SigfoxController {
     const newMessage = await this.sigFoxService.saveDataFromCallBack(payloadMessage);
     return newMessage;
   }
+
   @Post('volt/callback')
   async handleSigfoxVoltCallback( 
-      @Query('id') id: any, 
-      @Query('time') time: any,
-      @Query('data') data: any,
-      @Query('seqNumber') seqNumber: any,
+    @Body() payload: any,
     ) {
-      console.log('++++++++++++++++++++');
-      console.log(id,time,data, seqNumber);
-      console.log('++++++++++++++++++++++++');
-      
+      console.log('+++++++++volt+++++++++++');      
+      const {seqNumber, data, device, time, deviceTypeId} = payload;
+      console.log( seqNumber, data, device, time, deviceTypeId);
+      console.log('++++++++++volt++++++++++++++');
+      const payloadMessage = {
+        id: device,
+        time: time,
+        seqNumber: seqNumber,
+        data: data
+      };
+      console.log(payloadMessage);
+      const rta = await this.sigFoxService.publishDataEallora(payloadMessage);
+      return rta;
+  }
+
+  @Post('voltequal2/callback')
+  async handleSigfoxVoltCallback2( 
+      @Body() payload: any,
+    ) {
+      const {seqNumber, data, device, time, deviceTypeId} = payload;
+      console.log('+++++++equal2+++++++++++++');
+      console.log( seqNumber, data, device, time, deviceTypeId);
+      console.log('++++++++equal2++++++++++');
     const payloadMessage = {
-      id: id,
+      id: device,
       time: time,
       seqNumber: seqNumber,
       data: data
     };
-    console.log('-----------');
-    console.log(payloadMessage);
-    console.log('-----------');
+    const rta = await this.sigFoxService.publishDataEqualVolt(payloadMessage);
+    return rta;
+  }
 
-    const newMessage = await this.sigFoxService.saveDataFromCallBackVolt(payloadMessage);
-    return newMessage;
+  @Post('voltequal3/callback')
+  async handleSigfoxVoltCallback3( 
+      @Body() payload: any,
+    ) {
+      console.log('++++++++equal3++++++++++++');
+      const {seqNumber, data, device, time, deviceTypeId} = payload;
+      console.log(seqNumber, data, device, time, deviceTypeId);
+      console.log('+++++++++equal3+++++++++++++++');
+    const payloadMessage = {
+      id: device,
+      time: time,
+      seqNumber: seqNumber,
+      data: data
+    };
+    const rta = await this.sigFoxService.publishDataEqualVolt(payloadMessage);
+    return rta;
+  }
+  @Post('voltcfl/callback')
+  async handleSigfoxVoltCFL( 
+      @Body() payload: any,
+    ) {
+      console.log('++++++++cfl++++++++++++');
+      const {seqNumber, data, device, time, deviceTypeId} = payload;
+      console.log(seqNumber, data, device, time, deviceTypeId);
+      console.log('+++++++++cfl+++++++++++++++');
+    const payloadMessage = {
+      id: device,
+      time: time,
+      seqNumber: seqNumber,
+      data: data
+    };
+    return payloadMessage;
   }
 }

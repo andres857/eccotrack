@@ -3,62 +3,65 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DeviceDocument, Device } from './schema/device.schema';
 import { SigfoxService } from '../sigfox/sigfox.service';
-import { log } from 'console';
 
 @Injectable()
 export class DevicesService {
     constructor( @InjectModel(Device.name) private deviceModel:Model<DeviceDocument>,
     private sigFoxService:SigfoxService ){}
 
-    async decodeDeviceTypeVoltMessages(messages){
-        let statusDevices = [
+    async decodedMessagesDeviceTypeVolt(messages){
+        const eventDevices = [
             {
                 name: 'keepAlive',
+                typeAlert: "keepAlive",
                 pattern: 'c5c90',
             },
             {
-                name: 'keepAlive',
-                pattern: 'c5c99010',
-            },
-            {
                 name: 'powerOn',
+                typeAlert: "up",
                 pattern: 'c5c98',
             },
             {
-                name: 'powerOff',  
+                name: 'powerOff',
                 pattern: 'c5c99',
-            },
-            {
-                name: 'deviceOn',
-                pattern: 'c5c99000',
-            },
-            {
-                name: 'deviceOn',
-                pattern: 'c5c98000',
+                typeAlert: "down",
             }
         ];
+        
         const decodedMessages = messages.map( message => {
-            const data = ( message.data[7] !== '0' ) ? message.data.slice(0, 5) : message.data.slice(0, 8);
-            if ( data.length === 8 ) {
-                const status = statusDevices.find( status => status.pattern === data ); 
-                return {
-                    id: message.id,
-                    time: message.time,
-                    data: message.data,
-                    seqNumber: message.seqNumber,
-                    lqi: message.lqi,
-                    status: status.name
+            let eventDeviceOn;
+            // calcula el porcentaje de batería
+            const batteryCoded = message.data.slice(-2);
+            const battery = ((parseInt(batteryCoded, 16) * 0.05) + 1.45).toFixed(2);
+            const batteryNumeric = parseFloat(battery); // Convertir a número
+            const batteryPorcentaje = ( batteryNumeric / 3) * 100;
+            
+            // calcula la temperatura
+            const temperatureCoded = message.data.slice(-6, -2);
+            const temperatureDecimal = parseInt(temperatureCoded, 16);
+            const temperature = (temperatureDecimal / 10) -5;
+
+            const dataEventOn = message.data.slice( 5, -7 );
+            
+            if ( dataEventOn === '00000000') {                
+                eventDeviceOn = {
+                    name: 'deviceOn',
+                    pattern: 'c5c9900000000',
+                    typeAlert: "on",
                 }
-            }else{
-                const status = statusDevices.find( status => status.pattern === data ); 
-                return {
-                    id: message.id,
-                    time: message.time,
-                    data: message.data,
-                    seqNumber: message.seqNumber,
-                    lqi: message.lqi,
-                    status: status.name
-                }
+            }else {
+                eventDeviceOn = null;
+            }
+            const data = message.data.slice( 0, 5 );
+            const statusDevice = eventDevices.find( status => status.pattern === data) || { name: 'unknown', typeAlert: "unknown" }; 
+            return {
+                id: message.id,
+                typeAlert: eventDeviceOn === null ? statusDevice.typeAlert : eventDeviceOn.typeAlert,
+                time: message.time,
+                battery: parseFloat(batteryPorcentaje.toFixed(0)),
+                temperature: parseFloat(temperature.toFixed(2)),
+                iskeepAlive: statusDevice.name === 'keepAlive' ? 1 : 0,
+                status: 1
             }
         });
         return decodedMessages;
@@ -80,20 +83,19 @@ export class DevicesService {
                     lqi: message.lqi
                 }
             });
-            const decodedmessages = await this.decodeDeviceTypeVoltMessages(messages);
+            const decodedmessages = await this.decodedMessagesDeviceTypeVolt(messages);
             return decodedmessages;
         } catch (error) {
             console.log(error);
         }
-        
-        // return decodedmessages;
     }
     // volt equal devices
     async getEqualDevices(){
-        return await this.sigFoxService.getDevicesEqual();
+        const devices = await this.sigFoxService.getDevicesEqual();
+        return devices;
     }
     async getEqualMessages(id){
-        const { data } = await this.sigFoxService.getMessageEqual(id);        
+        const { data } = await this.sigFoxService.getMessageEqual(id);                
         const messages = data.data.map( message => {
             return {
                 id: message.device.id,
@@ -103,15 +105,56 @@ export class DevicesService {
                 lqi: message.lqi
             }
         });
-        const decodedmessages = await this.decodeDeviceTypeVoltMessages(messages);
+        const decodedmessages = await this.decodedMessagesDeviceTypeVolt(messages);
         return decodedmessages;
     }
 
-    // eccotrack devices
-    async getDevicesSigFox(){
-        return await this.sigFoxService.getAll();
+    // volt AIRNEX devices
+    async getAirnexDevices(){
+        return await this.sigFoxService.getDevicesAIRNEX();
     }
-    async getDevices(){
+    async getAirnexMessages(id){
+        const { data } = await this.sigFoxService.getMessageAIRNEX(id);        
+        const messages = data.data.map( message => {
+            return {
+                id: message.device.id,
+                time: message.time,
+                data: message.data,
+                seqNumber: message.seqNumber,
+                lqi: message.lqi
+            }
+        });
+        const decodedmessages = await this.decodedMessagesDeviceTypeVolt(messages);
+        return decodedmessages;
+    }
+
+    // volt CFL devices
+    async getCFLDevices(){
+        const devices = await this.sigFoxService.getDevicesCFL();
+        return devices;
+    }
+    async getCFLMessages(id){
+        const { data } = await this.sigFoxService.getMessageCFL(id);        
+        const messages = data.data.map( message => {
+            return {
+                id: message.device.id,
+                time: message.time,
+                data: message.data,
+                seqNumber: message.seqNumber,
+                lqi: message.lqi
+            }
+        });
+        const decodedmessages = await this.decodedMessagesDeviceTypeVolt(messages);
+        return decodedmessages;
+    }
+
+    // eccotrack ACCIONA devices
+    async getAccionaDevices(){
+        // request to sigfox API
+        return await this.sigFoxService.getAccionaDevices();
+    }
+    async getDevicesdb(){
+        // request db system
         return await this.deviceModel.find({});
     }
     async getDeviceById(idDevice){
@@ -140,14 +183,14 @@ export class DevicesService {
         }
     }
     async updateListDevices(){
-        const { data } = await this.getDevicesSigFox();
-        const devices = await this.getDevices();
+        const { data } = await this.getAccionaDevices();
+        const devices = await this.getDevicesdb();
 
         if (data.length !== devices.length){
             await Promise.all( data.map(async device =>{
                 await this.updateDevice( device );
             }))
-            return await this.getDevices();
+            return await this.getDevicesdb();
         }else{
             return ''
         }

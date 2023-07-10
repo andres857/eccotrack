@@ -18,6 +18,7 @@ import { EventsModule } from './events/events.module';
 import { ClientsModule } from './clients/clients.module';
 import { SharedModule } from './shared-module/shared-module.module';
 import { VoltModule } from './volt/volt.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -51,7 +52,8 @@ import { VoltModule } from './volt/volt.module';
     EventsModule, 
     ClientsModule, 
     SharedModule, 
-    VoltModule
+    VoltModule, 
+    AuthModule
   ],
   controllers: [
     AppController, 

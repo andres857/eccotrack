@@ -1,8 +1,8 @@
 import { Injectable,ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model,Types } from 'mongoose'
-import {ClientDocument, Client} from './schema/client.schema'
-import {CreateClientDto, UpdateClientDto} from './dto/create.client.dto'
+import { ClientDocument, Client } from './schema/client.schema'
+import { CreateClientDto, UpdateClientDto } from './dto/create.client.dto'
 
 @Injectable()
 export class ClientsService {
@@ -17,17 +17,12 @@ export class ClientsService {
         return !!client;
     }
 
-    async create(payload:CreateClientDto){
-  console.log(payload);
-        
+    async create( payload:CreateClientDto ){
         payload.name = payload.name.toLowerCase()
-        const client = await this.findByName(payload.name)
-console.log(payload);
-
+        const client = await this.findClientByName(payload.name)
         if (!client){            
             const newClient = await this.clientModel.create(payload)
             console.log(newClient);
-            
             return newClient
         }
         throw new ConflictException(`El cliente ${payload} ya existe`)
@@ -38,14 +33,14 @@ console.log(payload);
         return clients
     }
 
-    async findByName(name: string){
-        const clientFound = await this.clientModel.findOne({name})
+    async findClientByName(name: string){
+        const clientFound = await this.clientModel.findOne({ name })
         return clientFound
     }
 
     async update(payload: UpdateClientDto){
         payload.name = payload.name.toLowerCase()
-        const client = await this.findByName(payload.name)
+        const client = await this.findClientByName(payload.name)
         if (!client){            
             throw new Error('Client not found');
         }
@@ -54,10 +49,26 @@ console.log(payload);
         console.log(updatedClient);
         return {rta, updatedClient}
     }
-    
+    async addUserToClient(clientId: string, userId: string): Promise<Client> {
+        const convertedClientID = new Types.ObjectId(clientId);
+        const convertedUserID = new Types.ObjectId(userId);
+        const userExistsOnClient = await this.clientModel.find({users: convertedUserID}).exec();
+        
+        if ( userExistsOnClient.length === 0 ){
+            console.log('User does not exist on client, creating new user on client');
+            const updatedClient = await this.clientModel.findByIdAndUpdate(
+                convertedClientID,
+                { $push: { users: convertedUserID } },
+                { new: true }
+              ).exec();
+            return updatedClient;
+        }else{
+            throw new Error('User already exists on client');
+        }
+    }
     async delete(payload){
         payload.name = payload.name.toLowerCase()
-        const client = await this.findByName(payload.name)
+        const client = await this.findClientByName(payload.name)
         if (!client){            
             throw new Error('Client not found');
         }

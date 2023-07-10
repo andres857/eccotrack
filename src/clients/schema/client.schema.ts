@@ -1,32 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type ClientDocument = HydratedDocument<Client>;
 
 @Schema({ timestamps: true })
 export class Client {
-  
-  @Prop({ required: true, unique: true })
-  name: string;
+  @Prop()
+  name?: string;
 
-  @Prop([{ // Agregar un arreglo de contactos
-    name: String,
-    lastname: String,
-    position: String,
-    area: String,
-    email: String,
-    phone: String,
-  }])
-  contact: Contact[];
-}
+  @Prop({ type: { user: String, pass: String } })
+  sigfox_auth?: {
+    user?: string;
+    pass?: string;
+  };
 
-interface Contact {
-  name: string;
-  lastname: string;
-  position: string;
-  area: string;
-  email: string;
-  phone: string;
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Users' }] })
+  users?: Types.ObjectId[];
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Devices' }] })
+  devices?: Types.ObjectId[];
 }
 
 export const clientSchema = SchemaFactory.createForClass(Client);

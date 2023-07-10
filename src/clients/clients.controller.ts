@@ -5,23 +5,28 @@ import { ClientsService  } from './clients.service'
 export class ClientsController {
     constructor( private clientService: ClientsService ){}
     @Get()
-    getclients(){
-        const clients = this.clientService.findAll()
-        return clients
+    getClients(){
+        const clients = this.clientService.findAll();
+        return clients;
     }
     @Post()
     create(@Body() payload: any){
-        const newClient = this.clientService.create(payload)
-        return newClient
+        const newClient = this.clientService.create(payload);
+        return newClient;
     }
     @Put()
     updateClient(@Body() payload: any){
-        const newClient = this.clientService.update(payload)
-        return newClient
+        const newClient = this.clientService.update(payload);
+        return newClient;
+    }
+    @Put('addUserToClient')
+    addUserToClient(@Body() payload: any){
+        const uploadClient = this.clientService.addUserToClient(payload.clientId, payload.userId);
+        return uploadClient;
     }
     @Delete()
     deleteClient(@Body() payload: any){
-        const deleteClient = this.clientService.delete(payload)
-        return deleteClient
+        const deleteClient = this.clientService.delete(payload);
+        return deleteClient;
     }
 }

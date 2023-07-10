@@ -1,10 +1,13 @@
-import { Controller, Get, Query,Param, Put } from '@nestjs/common';
+import { Controller, Get, Query,Param, Put, UseGuards, Req } from '@nestjs/common';
 import { DevicesService } from './devices.service';
+import { AuthGuard } from '@nestjs/passport';
+import { Request} from 'express';
 
-@Controller('/api/devices')
+@UseGuards(AuthGuard('local'))
+@Controller('devices')
 export class DevicesController {
     constructor( private devicesService: DevicesService ){}
-    
+
     @Get('shop-online')
     async getShopOnlineDevices(){
         const { data } = await this.devicesService.getShopOnlineDevices();
@@ -17,21 +20,49 @@ export class DevicesController {
     }
     @Get('equal')
     async getEqualDevices(){
-        const { data } = await this.devicesService.getEqualDevices(); 
-        return data;
+        console.log('getequalDevices ------- request --------');
+        return await this.devicesService.getEqualDevices(); 
     }
     @Get('equal/messages/:id')
     async getEqualMessages(@Param('id') id:string){
         const messages = await this.devicesService.getEqualMessages(id);
         return messages;
     }
-
-
-    @Get()
-    async getAllDevices(){
-        return await this.devicesService.getDevices();
+    @Get('airnex')
+    async getAirnexDevices(){
+        console.log('getAirnexDevices ------- request --------');
+        
+        const { data } = await this.devicesService.getAirnexDevices(); 
+        return data;
     }
-    @Put('update')
+    @Get('airnex/messages/:id')
+    async getAirnexMessages(@Param('id') id:string){
+        const messages = await this.devicesService.getAirnexMessages(id);
+        return messages;
+    }
+
+    @Get('cfl')
+    async getCFLDevices(){
+        console.log('getCFLDevices ------- request --------');
+        return await this.devicesService.getCFLDevices(); 
+    }
+    @Get('cfl/messages/:id')
+    async getCFLMessages(@Param('id') id:string){
+        const messages = await this.devicesService.getCFLMessages(id);
+        return messages;
+    }
+
+    @Get('acciona')
+    async getAccionaDevicesdb(@Req() request: Request){
+        console.log('getAcciona Devices ------- request --------');
+        const { username, password } = request.body;
+        console.log('Username:', username);
+        console.log('Password:', password);
+        const data  = await this.devicesService.getDevicesdb(); 
+        return data;
+    }
+
+    @Put('acciona/update')
     async updateDevicesFromSigFox(){
         const devices = await this.devicesService.updateListDevices();
         return devices;

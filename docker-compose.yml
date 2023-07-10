@@ -11,3 +11,7 @@ services:
       - ./node_modules:/usr/src/app/node_modules
     ports:
       - 3000:3000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
