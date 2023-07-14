@@ -33,16 +33,16 @@ export class SigfoxController {
   // }
 
 // acciona devices
-  @Post('callback')
-  async handleSigfoxCallback( @Body() payload: any, @Query('time') time: any, @Query('seqNumber') seqNumber: any) {
-    const payloadMessage = {
-      time: Number(time),
-      seqNumber: Number(seqNumber),
-      ...payload,
-    };
-    const newMessage = await this.sigFoxService.saveDataFromCallBack(payloadMessage);
-    return newMessage;
-  }
+  // @Post('callback')
+  // async handleSigfoxCallback( @Body() payload: any, @Query('time') time: any, @Query('seqNumber') seqNumber: any) {
+  //   const payloadMessage = {
+  //     time: Number(time),
+  //     seqNumber: Number(seqNumber),
+  //     ...payload,
+  //   };
+  //   const newMessage = await this.sigFoxService.saveDataFromCallBack(payloadMessage);
+  //   return newMessage;
+  // }
 
   @Post('volt/callback')
   async handleSigfoxVoltCallback( 
@@ -50,7 +50,6 @@ export class SigfoxController {
     ) {
       console.log('+++++++++volt+++++++++++');      
       const {seqNumber, data, device, time, deviceTypeId} = payload;
-      console.log( seqNumber, data, device, time, deviceTypeId);
       console.log('++++++++++volt++++++++++++++');
       const payloadMessage = {
         id: device,
@@ -63,55 +62,55 @@ export class SigfoxController {
       return rta;
   }
 
-  @Post('voltequal2/callback')
-  async handleSigfoxVoltCallback2( 
-      @Body() payload: any,
-    ) {
-      const {seqNumber, data, device, time, deviceTypeId} = payload;
-      console.log('+++++++equal2+++++++++++++');
-      console.log( seqNumber, data, device, time, deviceTypeId);
-      console.log('++++++++equal2++++++++++');
-    const payloadMessage = {
-      id: device,
-      time: time,
-      seqNumber: seqNumber,
-      data: data
-    };
-    const rta = await this.sigFoxService.publishDataEqualVolt(payloadMessage);
-    return rta;
-  }
+  // @Post('voltequal2/callback')
+  // async handleSigfoxVoltCallback2( 
+  //     @Body() payload: any,
+  //   ) {
+  //     const {seqNumber, data, device, time, deviceTypeId} = payload;
+  //     console.log('+++++++equal2+++++++++++++');
+  //     console.log( seqNumber, data, device, time, deviceTypeId);
+  //     console.log('++++++++equal2++++++++++');
+  //   const payloadMessage = {
+  //     id: device,
+  //     time: time,
+  //     seqNumber: seqNumber,
+  //     data: data
+  //   };
+  //   const rta = await this.sigFoxService.publishDataEqualVolt(payloadMessage);
+  //   return rta;
+  // }
 
-  @Post('voltequal3/callback')
-  async handleSigfoxVoltCallback3( 
-      @Body() payload: any,
-    ) {
-      console.log('++++++++equal3++++++++++++');
-      const {seqNumber, data, device, time, deviceTypeId} = payload;
-      console.log(seqNumber, data, device, time, deviceTypeId);
-      console.log('+++++++++equal3+++++++++++++++');
-    const payloadMessage = {
-      id: device,
-      time: time,
-      seqNumber: seqNumber,
-      data: data
-    };
-    const rta = await this.sigFoxService.publishDataEqualVolt(payloadMessage);
-    return rta;
-  }
-  @Post('voltcfl/callback')
-  async handleSigfoxVoltCFL( 
-      @Body() payload: any,
-    ) {
-      console.log('++++++++cfl++++++++++++');
-      const {seqNumber, data, device, time, deviceTypeId} = payload;
-      console.log(seqNumber, data, device, time, deviceTypeId);
-      console.log('+++++++++cfl+++++++++++++++');
-    const payloadMessage = {
-      id: device,
-      time: time,
-      seqNumber: seqNumber,
-      data: data
-    };
-    return payloadMessage;
-  }
+  // @Post('voltequal3/callback')
+  // async handleSigfoxVoltCallback3( 
+  //     @Body() payload: any,
+  //   ) {
+  //     console.log('++++++++equal3++++++++++++');
+  //     const {seqNumber, data, device, time, deviceTypeId} = payload;
+  //     console.log(seqNumber, data, device, time, deviceTypeId);
+  //     console.log('+++++++++equal3+++++++++++++++');
+  //   const payloadMessage = {
+  //     id: device,
+  //     time: time,
+  //     seqNumber: seqNumber,
+  //     data: data
+  //   };
+  //   const rta = await this.sigFoxService.publishDataEqualVolt(payloadMessage);
+  //   return rta;
+  // }
+  // @Post('voltcfl/callback')
+  // async handleSigfoxVoltCFL( 
+  //     @Body() payload: any,
+  //   ) {
+  //     console.log('++++++++cfl++++++++++++');
+  //     const {seqNumber, data, device, time, deviceTypeId} = payload;
+  //     console.log(seqNumber, data, device, time, deviceTypeId);
+  //     console.log('+++++++++cfl+++++++++++++++');
+  //   const payloadMessage = {
+  //     id: device,
+  //     time: time,
+  //     seqNumber: seqNumber,
+  //     data: data
+  //   };
+  //   return payloadMessage;
+  // }
 }

@@ -1,6 +1,6 @@
 require('dotenv').config();
 import axios from 'axios';
-import { Catch, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MessagesService } from '../messages/messages.service';
 import { SharedService } from 'src/shared-module/shared-module.service';
 import { VoltService } from 'src/volt/volt.service';
@@ -214,19 +214,20 @@ export class SigfoxService {
     }
     
     async saveDataFromCallBack(payload: any) {
-        const newMessage = await this.messageService.create(payload);
-        const dataUpdate = await this.sharedService.updateLastSeenOnDevices(payload);
-        console.log(newMessage);
+        // const newMessage = await this.messageService.create(payload);
+        // const dataUpdate = await this.sharedService.updateLastSeenOnDevices(payload);
+        // console.log(newMessage);
 
         console.log('data-update');
-        console.log(dataUpdate);
+        // console.log(dataUpdate);
         console.log('data-update/');
             
-        return newMessage;
+        // return newMessage;
     }
 
     async saveDataFromCallBackVolt(payload: any) {
-        return await this.voltService.create(payload);
+        const newMessage = await this.messageService.saveDataforEalloraPlatform(payload);
+        return newMessage;
     }
     
     // funciones temporales para publicar en equal
@@ -311,11 +312,6 @@ export class SigfoxService {
         const battery = ((parseInt(batteryCoded, 16) * 0.05) + 1.45).toFixed(2);
         const batteryNumeric = parseFloat(battery); // Convertir a número
         const batteryPorcentaje = ( batteryNumeric / 3) * 100;
-        
-        // calcula la temperatura
-        const temperatureCoded = dataRaw.slice(-6, -2);
-        const temperatureDecimal = parseInt(temperatureCoded, 16);
-        const temperature = (temperatureDecimal / 10) -5;
 
         const dataEventOn = dataRaw.slice( 5, -7 );
         
@@ -329,9 +325,44 @@ export class SigfoxService {
             eventDeviceOn = null;
         }
         const data = dataRaw.slice( 0, 5 );
+        // determina el tipo de evento
         const statusDevice = eventDevices.find( status => status.pattern === data) || { name: 'unknown', typeAlert: "unknown" }; 
         
-        if (statusDevice.name === 'powerOn') {
+        if (statusDevice.name === 'keepAlive') {
+            console.log('**********event keepalive*********');
+            const lastmessage = await this.messageService.getLastMessageByIdDevice(id);
+            console.log('lastmessage device keepalive', lastmessage);
+            if (!lastmessage) {
+                console.log('No document found with id: ${id}');
+                statusDeviceEallora = 0; // se setea un estado a 1 para el estado inicial 
+              }else{
+                // determinar el ultimo estado decodificando el message
+                const lastData = lastmessage.data;
+                const lastDataEventOn = lastData.slice( 5, -7 );
+                if ( lastDataEventOn === '00000000') {
+                    eventDeviceOn = {
+                        name: 'deviceOn',
+                        pattern: 'c5c9900000000',
+                        typeAlert: "on",
+                    }
+                }else {
+                    eventDeviceOn = null;
+                }
+                const lastData1 = lastData.slice( 0, 5 );
+                // determina el tipo de evento
+                console.log('determinar el tipo de eventoooooooooo');
+                
+                const lastStatusDevice = eventDevices.find( status => status.pattern === lastData1) || { name: 'unknown', typeAlert: "unknown" }; 
+                if (lastStatusDevice.name === 'powerOn') {
+                    console.log('recalculando *****---------------');
+                    statusDeviceEallora = 0;
+                } else if (lastStatusDevice.name === 'powerOff') {
+                    console.log('recalculando *****---------------');
+                    statusDeviceEallora = 1;
+                }
+              }
+        }
+        else if (statusDevice.name === 'powerOn') {
             statusDeviceEallora = 0;
         } else if (statusDevice.name === 'powerOff') {
             statusDeviceEallora = 1;
@@ -366,9 +397,6 @@ export class SigfoxService {
         return message;
     }
 
-    async getLastEventEalloraDevices(){
-        // obtener el ultimo evento conocido del dispositivo
-    }
     async publishDataEallora(payload){
         let message = '';
         console.log('payload', payload);
@@ -376,6 +404,8 @@ export class SigfoxService {
         const decodedMessage = await this.decodedMessageDeviceTypeVoltForEallora( data, id, time, seqNumber );
         console.log('decodedMessage', JSON.stringify(decodedMessage));
         console.log('status message -----', decodedMessage.status);
+        const dataEallora = await this.saveDataFromCallBackVolt(payload);
+        console.log('EALLORA', dataEallora);
         if (decodedMessage.status === 0 || decodedMessage.status === 1) {
             try {
                 const response = await axios.post(this.urlEalloraPROD, decodedMessage);
@@ -383,12 +413,11 @@ export class SigfoxService {
                 console.log('Respuesta del servidor de destino: ', response.data);
             }catch (error) {
                 message = 'error'
-                console.error('Error al enviar a equal: ', error.message);
+                console.error('Error al enviar a eallora: ', error.message);
             }
         }else{
             message = 'el evento no se envia a eallora';
         }
         return message;
     }
-    
 }

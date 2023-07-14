@@ -44,4 +44,21 @@ export class Message {
   computedLocation: ComputedLocation;
 }
 
+// Maneja el payload de Sigfox
+@Schema({ timestamps: true })
+export class PayloadVoltEallora {
+  @Prop()
+  id: string;
+  
+  @Prop()
+  time: string;
+  
+  @Prop()
+  seqNumber: string;
+
+  @Prop()
+  data: string;
+}
+
 export const messageSchema = SchemaFactory.createForClass(Message);
+export const payloadSchema = SchemaFactory.createForClass(PayloadVoltEallora);

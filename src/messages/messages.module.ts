@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { messageSchema, Message } from './schema/message.schema';
+import { messageSchema, payloadSchema, Message, PayloadVoltEallora } from './schema/message.schema';
 import { MessagesService } from './messages.service';
 import { MessagesController } from './messages.controller';
 
@@ -10,6 +10,10 @@ import { MessagesController } from './messages.controller';
       {
         name: Message.name,
         schema: messageSchema,
+      },
+      {
+        name: PayloadVoltEallora.name,
+        schema: payloadSchema,
       },
     ])
   ],
