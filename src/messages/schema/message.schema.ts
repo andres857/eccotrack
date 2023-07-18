@@ -44,9 +44,9 @@ export class Message {
   computedLocation: ComputedLocation;
 }
 
-// Maneja el payload de Sigfox
+// Schema para los dispositivos tipo Volt
 @Schema({ timestamps: true })
-export class PayloadVoltEallora {
+export class VoltMessage {
   @Prop()
   id: string;
   
@@ -58,7 +58,10 @@ export class PayloadVoltEallora {
 
   @Prop()
   data: string;
+
+  @Prop()
+  status: string;
 }
 
 export const messageSchema = SchemaFactory.createForClass(Message);
-export const payloadSchema = SchemaFactory.createForClass(PayloadVoltEallora);
+export const payloadSchema = SchemaFactory.createForClass(VoltMessage);

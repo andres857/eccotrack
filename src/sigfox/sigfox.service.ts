@@ -4,6 +4,8 @@ import { Injectable } from '@nestjs/common';
 import { MessagesService } from '../messages/messages.service';
 import { SharedService } from 'src/shared-module/shared-module.service';
 import { VoltService } from 'src/volt/volt.service';
+const https = require('https');
+
 
 @Injectable()
 export class SigfoxService {
@@ -200,7 +202,6 @@ export class SigfoxService {
         } catch (error) {
             console.log(error);      
         }
-
     }
 
     async getMessageByIdDevice(id){
@@ -230,181 +231,173 @@ export class SigfoxService {
         return newMessage;
     }
     
-    // funciones temporales para publicar en equal
-    async decodedMessageDeviceTypeVolt(dataRaw: any, id: any, time: any){
-        let eventDeviceOn;
+    // retorna todo el objeto del evento del device
+    async decodedEventVoltDevice(dataRaw: any){
         const eventDevices = [
             {
                 name: 'keepAlive',
                 typeAlert: "keepAlive",
                 pattern: 'c5c90',
+                status: null
             },
             {
                 name: 'powerOn',
                 typeAlert: "up",
                 pattern: 'c5c98',
+                status: 0
             },
             {
                 name: 'powerOff',
-                pattern: 'c5c99',
                 typeAlert: "down",
+                pattern: 'c5c99',
+                status: 1
+            },
+            {
+                name: 'deviceOn',
+                typeAlert: "on",
+                pattern: 'c5c9900000000',
+                status: 0
             }
         ];
+        // determina si el estado del dispositivo es on
+        if ( dataRaw.slice( 5, -7 ) === '00000000') {
+          return eventDevices[3].name;
+        }
+        const data = dataRaw.slice( 0, 5 );
+        const statusDevice = eventDevices.find( status => status.pattern === data) || { name: 'unknown', typeAlert: "unknown" }; 
+        return statusDevice;
+    }
+    // funciones temporales para publicar en equal
+    async decodedMessageDeviceTypeVoltForEqual(dataRaw: any, id: any){
+        let statusDevice = null;
+        let eventDevice = null;
+
         // calcula el porcentaje de batería
         const batteryCoded = dataRaw.slice(-2);
-        const battery = ((parseInt(batteryCoded, 16) * 0.05) + 1.45).toFixed(2);
-        const batteryNumeric = parseFloat(battery); // Convertir a número
-        const batteryPorcentaje = ( batteryNumeric / 3) * 100;
+        const battery = (parseInt(batteryCoded, 16));
+        
+        // const battery = ((parseInt(batteryCoded, 16) * 0.05) + 1.45).toFixed(2);
         
         // calcula la temperatura
         const temperatureCoded = dataRaw.slice(-6, -2);
         const temperatureDecimal = parseInt(temperatureCoded, 16);
         const temperature = (temperatureDecimal / 10) -5;
 
-        const dataEventOn = dataRaw.slice( 5, -7 );
-        
-        if ( dataEventOn === '00000000') {
-            eventDeviceOn = {
-                name: 'deviceOn',
-                pattern: 'c5c9900000000',
-                typeAlert: "on",
-            }
-        }else {
-            eventDeviceOn = null;
+        eventDevice = await this.decodedEventVoltDevice(dataRaw);
+
+        if (eventDevice.name === 'keepAlive') {
+            console.log('********** event keepalive found *********');
+            const lastmessage = await this.messageService.getLastMessageByIdDevice(id);
+            console.log('lastMessage of device', lastmessage);
+
+            if (!lastmessage) {
+                console.log(`Device not found with id: ${id}`);
+                statusDevice = 0; // Para el estado inicial se setea el status como 0
+            }else{
+                console.log('decodificando de nuevo el mensaje', lastmessage);
+                // eventDevice = await this.decodedEventVoltDevice(lastmessage.data);
+                const lastStatus = (lastmessage as any).status; // se omite la verificacion de typescript
+                // si el evento anterior tambien es keepAlive se setea el estado a 0
+                statusDevice = lastStatus;
+            }   
+        }else{
+            statusDevice = eventDevice.status;
         }
-        const data = dataRaw.slice( 0, 5 );
-        const statusDevice = eventDevices.find( status => status.pattern === data) || { name: 'unknown', typeAlert: "unknown" }; 
-    
         const decodedMessage = {
-            id: id,
-            typeAlert: eventDeviceOn === null ? statusDevice.typeAlert : eventDeviceOn.typeAlert,
-            time: time,
-            battery: parseFloat(batteryPorcentaje.toFixed(0)),
-            temperature: parseFloat(temperature.toFixed(2)),
-            iskeepAlive: statusDevice.name === 'keepAlive' ? 1 : 0,
-            status: 1
+            type: 'data',
+            object: id,
+            i1: parseInt(statusDevice),
+            i2: battery/10,
+            i3: parseFloat(temperature.toFixed(2)),
+            i4: eventDevice.name === 'keepAlive' ? 1 : 0,
         }
         return decodedMessage;
     }
 
     async decodedMessageDeviceTypeVoltForEallora(dataRaw: any, id: any, time: any, seqNumber: any){
-        let statusDeviceEallora = null;
-        let eventDeviceOn;
-        const eventDevices = [
-            {
-                name: 'keepAlive',
-                typeAlert: "keepAlive",
-                pattern: 'c5c90',
-            },
-            {
-                name: 'powerOn',
-                typeAlert: "up",
-                pattern: 'c5c98',
-            },
-            {
-                name: 'powerOff',
-                pattern: 'c5c99',
-                typeAlert: "down",
-            }
-        ];
+        let statusDevice = null;
+        let eventDevice = null;
         // calcula el porcentaje de batería
         const batteryCoded = dataRaw.slice(-2);
         const battery = ((parseInt(batteryCoded, 16) * 0.05) + 1.45).toFixed(2);
         const batteryNumeric = parseFloat(battery); // Convertir a número
         const batteryPorcentaje = ( batteryNumeric / 3) * 100;
 
-        const dataEventOn = dataRaw.slice( 5, -7 );
+        eventDevice = await this.decodedEventVoltDevice(dataRaw);
         
-        if ( dataEventOn === '00000000') {
-            eventDeviceOn = {
-                name: 'deviceOn',
-                pattern: 'c5c9900000000',
-                typeAlert: "on",
-            }
-        }else {
-            eventDeviceOn = null;
-        }
-        const data = dataRaw.slice( 0, 5 );
-        // determina el tipo de evento
-        const statusDevice = eventDevices.find( status => status.pattern === data) || { name: 'unknown', typeAlert: "unknown" }; 
-        
-        if (statusDevice.name === 'keepAlive') {
-            console.log('**********event keepalive*********');
+        if (eventDevice.name === 'keepAlive') {
+            console.log('********** event keepalive found *********');
             const lastmessage = await this.messageService.getLastMessageByIdDevice(id);
-            console.log('lastmessage device keepalive', lastmessage);
+            console.log('lastMessage of device', lastmessage);
+
             if (!lastmessage) {
-                console.log('No document found with id: ${id}');
-                statusDeviceEallora = 0; // se setea un estado a 1 para el estado inicial 
-              }else{
-                // determinar el ultimo estado decodificando el message
-                const lastData = lastmessage.data;
-                const lastDataEventOn = lastData.slice( 5, -7 );
-                if ( lastDataEventOn === '00000000') {
-                    eventDeviceOn = {
-                        name: 'deviceOn',
-                        pattern: 'c5c9900000000',
-                        typeAlert: "on",
-                    }
-                }else {
-                    eventDeviceOn = null;
-                }
-                const lastData1 = lastData.slice( 0, 5 );
-                // determina el tipo de evento
-                console.log('determinar el tipo de eventoooooooooo');
-                
-                const lastStatusDevice = eventDevices.find( status => status.pattern === lastData1) || { name: 'unknown', typeAlert: "unknown" }; 
-                if (lastStatusDevice.name === 'powerOn') {
-                    console.log('recalculando *****---------------');
-                    statusDeviceEallora = 0;
-                } else if (lastStatusDevice.name === 'powerOff') {
-                    console.log('recalculando *****---------------');
-                    statusDeviceEallora = 1;
-                }
-              }
+                console.log(`Device not found with id: ${id}`);
+                statusDevice = 0; // Para el estado inicial se setea el status como 0
+            }else{
+                console.log('decodificando de nuevo el mensaje', lastmessage);
+                // eventDevice = await this.decodedEventVoltDevice(lastmessage.data);
+                const lastStatus = (lastmessage as any).status; // se omite la verificacion de typescript
+                // si el evento anterior tambien es keepAlive se setea el estado a 0
+                statusDevice = lastStatus;
+            }   
+        }else{
+            statusDevice = eventDevice.status;
         }
-        else if (statusDevice.name === 'powerOn') {
-            statusDeviceEallora = 0;
-        } else if (statusDevice.name === 'powerOff') {
-            statusDeviceEallora = 1;
-        }
+
         const decodedMessage = {
             key: `00${id}`,
             updated: time * 1000,
             battery: parseInt(batteryPorcentaje.toFixed(0)),
             sequence: parseInt(seqNumber),
-            status: parseInt(statusDeviceEallora),
+            status: parseInt(statusDevice),
         }        
         return decodedMessage;
     }
 
-    async publishDataEqualVolt(payload: any){
+    async publishDataToEqualPlatform(payload: any){
+        const agent = new https.Agent({  
+            rejectUnauthorized: false
+          });
         let message = '';
-        console.log('publishDataEqualVolt');
-        const url = 'https://monitoring-api.equal.fr/api/send';
+        const url = 'https://monitoring-api.e-qual.fr/api/send';
         console.log('payload', payload);
         const { id, time, data } = payload;
         console.log('id', id, 'time', time, 'data', data);
-        const decodedMessage = await this.decodedMessageDeviceTypeVolt( data, id, time );
+        const decodedMessage = await this.decodedMessageDeviceTypeVoltForEqual( data, id );
         console.log('decodedMessage', decodedMessage);
+
+        payload.status = decodedMessage.i1;
+        console.log('payload', payload);
+        
+        await this.saveDataFromCallBackVolt(payload); //save data in our database
         try {
-            const response = await axios.post(url, decodedMessage);
+            const response = await axios.post(url, decodedMessage,{
+                headers: {
+                    'x-api-key': '049f4f67-6e3b-4007-a700-9017e29d15b4',
+                    'Content-Type': 'application/json'
+                },
+                httpsAgent: agent
+            });
+            console.log('Respuesta del servidor Equal: ', response.data);
             message = 'success'
-            console.log('Respuesta del servidor de destino: ', response.data);
         }catch (error) {
+            console.error('Error al enviar a equal Platform: ', error);
             message = 'error'
-            console.error('Error al enviar a equal: ', error);
         }
         return message;
     }
 
-    async publishDataEallora(payload){
+    async publishDataToEalloraPlatform(payload){
         let message = '';
         console.log('payload', payload);
         const { id, time, seqNumber, data } = payload;
         const decodedMessage = await this.decodedMessageDeviceTypeVoltForEallora( data, id, time, seqNumber );
         console.log('decodedMessage', JSON.stringify(decodedMessage));
         console.log('status message -----', decodedMessage.status);
-        const dataEallora = await this.saveDataFromCallBackVolt(payload);
+        payload.status = decodedMessage.status;
+        console.log('dataTosave', payload);
+        
+        const dataEallora = await this.saveDataFromCallBackVolt(payload); //save data in our database
         console.log('EALLORA', dataEallora);
         if (decodedMessage.status === 0 || decodedMessage.status === 1) {
             try {

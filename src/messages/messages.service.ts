@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { messageDocument, Message } from './schema/message.schema';
-import { PayloadVoltEallora, payloadSchema } from './schema/message.schema';
+import { VoltMessage, payloadSchema } from './schema/message.schema';
 
 @Injectable()
 export class MessagesService {
     constructor(
-        @InjectModel(PayloadVoltEallora.name) private payloadModel:Model<messageDocument>,
+        @InjectModel(VoltMessage.name) private payloadModel:Model<messageDocument>,
         @InjectModel(Message.name) private messageModel:Model<messageDocument>
         ){}
 

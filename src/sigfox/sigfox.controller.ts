@@ -58,45 +58,45 @@ export class SigfoxController {
         data: data
       };
       console.log(payloadMessage);
-      const rta = await this.sigFoxService.publishDataEallora(payloadMessage);
+      const rta = await this.sigFoxService.publishDataToEalloraPlatform(payloadMessage);
       return rta;
   }
 
-  // @Post('voltequal2/callback')
-  // async handleSigfoxVoltCallback2( 
-  //     @Body() payload: any,
-  //   ) {
-  //     const {seqNumber, data, device, time, deviceTypeId} = payload;
-  //     console.log('+++++++equal2+++++++++++++');
-  //     console.log( seqNumber, data, device, time, deviceTypeId);
-  //     console.log('++++++++equal2++++++++++');
-  //   const payloadMessage = {
-  //     id: device,
-  //     time: time,
-  //     seqNumber: seqNumber,
-  //     data: data
-  //   };
-  //   const rta = await this.sigFoxService.publishDataEqualVolt(payloadMessage);
-  //   return rta;
-  // }
+  @Post('voltequal2/callback')
+  async handleSigfoxVoltCallback2( 
+      @Body() payload: any,
+    ) {
+      const {seqNumber, data, device, time, deviceTypeId} = payload;
+      console.log('+++++++equal2+++++++++++++');
+      console.log( seqNumber, data, device, time, deviceTypeId);
+      console.log('++++++++equal2++++++++++');
+    const payloadMessage = {
+      id: device,
+      time: time,
+      seqNumber: seqNumber,
+      data: data
+    };
+    const rta = await this.sigFoxService.publishDataToEqualPlatform(payloadMessage);
+    return rta;
+  }
 
-  // @Post('voltequal3/callback')
-  // async handleSigfoxVoltCallback3( 
-  //     @Body() payload: any,
-  //   ) {
-  //     console.log('++++++++equal3++++++++++++');
-  //     const {seqNumber, data, device, time, deviceTypeId} = payload;
-  //     console.log(seqNumber, data, device, time, deviceTypeId);
-  //     console.log('+++++++++equal3+++++++++++++++');
-  //   const payloadMessage = {
-  //     id: device,
-  //     time: time,
-  //     seqNumber: seqNumber,
-  //     data: data
-  //   };
-  //   const rta = await this.sigFoxService.publishDataEqualVolt(payloadMessage);
-  //   return rta;
-  // }
+  @Post('voltequal3/callback')
+  async handleSigfoxVoltCallback3( 
+      @Body() payload: any,
+    ) {
+      console.log('++++++++equal3++++++++++++');
+      const {seqNumber, data, device, time, deviceTypeId} = payload;
+      console.log(seqNumber, data, device, time, deviceTypeId);
+      console.log('+++++++++equal3+++++++++++++++');
+    const payloadMessage = {
+      id: device,
+      time: time,
+      seqNumber: seqNumber,
+      data: data
+    };
+    const rta = await this.sigFoxService.publishDataToEqualPlatform(payloadMessage);
+    return rta;
+  }
   // @Post('voltcfl/callback')
   // async handleSigfoxVoltCFL( 
   //     @Body() payload: any,
