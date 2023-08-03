@@ -21,6 +21,21 @@ export class SigfoxService {
     private passSigfoxCFL: string;
     private urlEalloraDEV: string;
     private urlEalloraPROD: string;
+    private userSigFoxLigabue: string;
+    private passSigfoxLigabue: string;
+    private userSigFoxFRANCOIS: string;
+    private passSigfoxFRANCOIS: string;
+    private userSigFoxSTEFANO: string;
+    private passSigfoxSTEFANO: string;
+    private userSigfoxTELENEXT: string;
+    private passSigfoxTELENEXT: string;
+    private usserSigfoxJOSE: string;
+    private passSigfoxJOSE: string;
+    private userSigFoxFERNANDO: string;
+    private passSigfoxFERNANDO: string;
+    private userSigFoxPAOLO: string;
+    private passSigfoxPAOLO: string;
+    
 
     constructor( 
         private messageService: MessagesService,
@@ -41,6 +56,20 @@ export class SigfoxService {
         this.passSigfoxAIRNEX = process.env.PASSWORDAIRNEX;
         this.userSigFoxCFL = process.env.USERNAMECFL;
         this.passSigfoxCFL = process.env.PASSWORDCFL;
+        this.userSigFoxLigabue = process.env.USERNAMELIGABUE;
+        this.passSigfoxLigabue = process.env.PASSWORDLIGABUE;
+        this.userSigFoxFRANCOIS = process.env.USERNAMEFRANCOIS;
+        this.passSigfoxFRANCOIS = process.env.PASSWORDFRANCOIS;
+        this.userSigFoxSTEFANO = process.env.USERNAMESTEFANO;
+        this.passSigfoxSTEFANO = process.env.PASSWORDSTEFANO;
+        this.userSigfoxTELENEXT = process.env.USERNAMETELENEXT;
+        this.passSigfoxTELENEXT = process.env.PASSWORDTELENEXT;
+        this.usserSigfoxJOSE = process.env.USERNAMEJOSE;
+        this.passSigfoxJOSE = process.env.PASSWORDJOSE;
+        this.userSigFoxFERNANDO = process.env.USERNAMEFERNANDO;
+        this.passSigfoxFERNANDO = process.env.PASSWORDFERNANDO;
+        this.userSigFoxPAOLO = process.env.USERNAMEPAOLO;
+        this.passSigfoxPAOLO = process.env.PASSWORDPAOLO;
     }
     // DEVICES TYPE - VOLT equal
     async getDevicesEqual(){
@@ -64,6 +93,7 @@ export class SigfoxService {
             console.error(error);
         }
     }
+
     async getMessageEqual(id){
         try {
             return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
@@ -91,6 +121,7 @@ export class SigfoxService {
             console.error(error);
         }
     }
+
     async getMessageShopOnline(id){
         try {
             return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
@@ -103,6 +134,263 @@ export class SigfoxService {
             console.log(error);
         }
     }
+
+    // DEVICES TYPE - VOLT Fernando Agrasar
+    async getDevicesFernando(){
+        try {
+            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
+                auth:{
+                    username: this.userSigFoxFERNANDO,
+                    password: this.passSigfoxFERNANDO,
+                }
+            });
+            const devices = data.data.map( item =>{
+                return {
+                    id: item.id,
+                    name: item.name,
+                    comState: item.comState,
+                    lqi: item.lqi,
+                }
+            })
+            return devices;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async getMessageFernando(id){
+        try {
+            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
+                auth:{
+                    username: this.userSigFoxFERNANDO,
+                    password: this.passSigfoxFERNANDO,
+                }
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    
+    // Devices type - VOLT José Marey
+    async getDevicesJose(){
+        try {
+            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
+                auth:{
+                    username: this.usserSigfoxJOSE,
+                    password: this.passSigfoxJOSE,
+                }
+            });
+            const devices = data.data.map( item =>{
+                return {
+                    id: item.id,
+                    name: item.name,
+                    comState: item.comState,
+                    lqi: item.lqi,
+                }
+            })
+            return devices;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    
+    async getMessageJose(id){
+        try {
+            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
+                auth:{
+                    username: this.usserSigfoxJOSE,
+                    password: this.passSigfoxJOSE,
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    //  DEVICES TYPE - VOLT Sig. Ligabue
+    async getDevicesLigabue(){
+        try {
+            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
+                auth:{
+                    username: this.userSigFoxLigabue,
+                    password: this.passSigfoxLigabue,
+                }
+            });            
+            const devices = data.data.map( item =>{
+                return {
+                    id: item.id,
+                    name: item.name,
+                    comState: item.comState,
+                    lqi: item.lqi,
+                }
+            })
+            return devices;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async getMessageLigabue(id){
+        try {
+            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
+                auth:{
+                    username: this.userSigFoxLigabue,
+                    password: this.passSigfoxLigabue,
+                }
+            });
+        } catch (error) {            
+            console.log(error.message);
+            return error;
+        }
+    }
+
+    // DEVICES TYPE - VOLT Sig. Paolo Borghetti
+    async getDevicesPaolo(){
+        try {
+            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
+                auth:{
+                    username: this.userSigFoxPAOLO,
+                    password: this.passSigfoxPAOLO,
+                }
+            });
+            const devices = data.data.map( item =>{
+                return {
+                    id: item.id,
+                    name: item.name,
+                    comState: item.comState,
+                    lqi: item.lqi,
+                }
+            })
+            return devices;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async getMessagePaolo(id){
+        try {
+            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
+                auth:{
+                    username: this.userSigFoxPAOLO,
+                    password: this.passSigfoxPAOLO,
+                }
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    // DEVICES TYPE - VOLT Sig. Francois
+    async getDevicesFrancois(){
+        try {
+            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
+                auth:{
+                    username: this.userSigFoxFRANCOIS,
+                    password: this.passSigfoxFRANCOIS,
+                }
+            });
+            const devices = data.data.map( item =>{
+                return {
+                    id: item.id,
+                    name: item.name,
+                    comState: item.comState,
+                    lqi: item.lqi,
+                }
+            });
+            return devices;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async getMessageFrancois(id){
+        try {
+            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
+                auth:{
+                    username: this.userSigFoxFRANCOIS,
+                    password: this.passSigfoxFRANCOIS,
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
+    // DEVICES TYPE - VOLT Sig. Stefano
+    async getDevicesStefano(){
+        try {
+            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
+                auth:{
+                    username: this.userSigFoxSTEFANO,
+                    password: this.passSigfoxSTEFANO,
+                }
+            });
+            const devices = data.data.map( item =>{
+                return {
+                    id: item.id,
+                    name: item.name,
+                    comState: item.comState,
+                    lqi: item.lqi,
+                }
+            });
+            return devices;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async getMessageStefano(id){
+        try {
+            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
+                auth:{
+                    username: this.userSigFoxSTEFANO,
+                    password: this.passSigfoxSTEFANO,
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
+    // DEVICES TYPE - VOLT Sig. Telenext
+    async getDevicesTelenext(){
+        try{
+            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
+                auth: {
+                    username: this.userSigfoxTELENEXT,
+                    password: this.passSigfoxTELENEXT,
+                }
+            });
+            const devices = data.data.map( item =>{
+                return {
+                    id: item.id,
+                    name: item.name,
+                    comState: item.comState,
+                    lqi: item.lqi,
+                }
+            });
+            return devices;
+        }
+        catch(error){
+            console.error(error);
+        }
+    }
+
+    async getMessageTelenext(id){
+        try{
+            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
+                auth: {
+                    username: this.userSigfoxTELENEXT,
+                    password: this.passSigfoxTELENEXT,
+                }
+            });
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+    
     // DEVICES TYPE - VOLT AIRNEX
     async getDevicesAIRNEX(){
         try {
@@ -215,14 +503,12 @@ export class SigfoxService {
     }
     
     async saveDataFromCallBack(payload: any) {
-        // const newMessage = await this.messageService.create(payload);
-        // const dataUpdate = await this.sharedService.updateLastSeenOnDevices(payload);
+        const newMessage = await this.messageService.create(payload);
+        const dataUpdate = await this.sharedService.updateLastSeenOnDevices(payload);
         // console.log(newMessage);
-
         console.log('data-update');
         // console.log(dataUpdate);
         console.log('data-update/');
-            
         // return newMessage;
     }
 
@@ -230,7 +516,6 @@ export class SigfoxService {
         const newMessage = await this.messageService.saveDataforEalloraPlatform(payload);
         return newMessage;
     }
-    
     // retorna todo el objeto del evento del device
     async decodedEventVoltDevice(dataRaw: any){
         const eventDevices = [

@@ -18,6 +18,89 @@ export class DevicesController {
         const messages = await this.devicesService.getShopOnlineMessages(id);
         return messages;
     }
+
+    @Get('ligabue')
+    async getLigabueDevices(){
+        console.log('getLigabueDevices ------- request --------');
+        return await this.devicesService.getLigabueDevices();
+    }
+    @Get('ligabue/messages/:id')
+    async getLigabueMessages(@Param('id') id:string){
+        const messages = await this.devicesService.getLigabueMessages(id);
+        return messages;
+    }
+
+    @Get('francois')
+    async getFrancoisDevices(){
+        console.log('getFrancoisDevices ------- request --------');
+        return await this.devicesService.getFrancoisDevices();
+    }
+    @Get('francois/messages/:id')
+    async getFrancoisMessages(@Param('id') id:string){
+        const messages = await this.devicesService.getFrancoisMessages(id);
+        return messages;
+    }
+
+    @Get('Stefano')
+    async getStefanoDevices(){
+        console.log('getStefanoDevices ------- request --------');
+        return await this.devicesService.getStefanoDevices();
+    }
+    @Get('Stefano/messages/:id')
+    async getStefanoMessages(@Param('id') id:string){
+        const messages = await this.devicesService.getStefanoMessages(id);
+        return messages;
+    }
+
+    @Get('Fernando')
+    async getFernandoDevices(){
+        console.log('getFernandoDevices ------- request --------');
+        return await this.devicesService.getFernandoDevices();
+    }
+
+    @Get('Fernando/messages/:id')
+    async getFernandoMessages(@Param('id') id:string){
+        const messages = await this.devicesService.getFernandoMessages(id);
+        return messages;
+    }
+
+    @Get('Paolo')
+    async getPaoloDevices(){
+        console.log('getPaoloDevices ------- request --------');
+        return await this.devicesService.getPaoloDevices();
+    }
+
+    @Get('Paolo/messages/:id')
+    async getPaoloMessages(@Param('id') id:string){
+        const messages = await this.devicesService.getPaoloMessages(id);
+        return messages;
+    }
+
+    @Get('Jose')
+    async getJoseDevices(){
+        console.log('getJoseDevices ------- request --------');
+        return await this.devicesService.getJoseDevices();
+    }
+
+    @Get('Jose/messages/:id')
+    async getJoseMessages(@Param('id') id:string){
+        const messages = await this.devicesService.getJoseMessages(id);
+        return messages;
+    }
+    
+    @Get('Telenext')
+    async getTelenextDevices(){
+        console.log('getTelenextDevices ------- request --------');
+        return await this.devicesService.getTelenextDevices();
+    }
+    @Get('Telenext/messages/:id')
+    async getTelenextMessages(@Param('id') id:string){
+        const messages = await this.devicesService.getTelenextMessages(id);
+        return messages;
+    }
+
+    
+
     @Get('equal')
     async getEqualDevices(){
         console.log('getequalDevices ------- request --------');

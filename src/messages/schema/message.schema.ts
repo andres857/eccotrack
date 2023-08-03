@@ -63,5 +63,6 @@ export class VoltMessage {
   status: string;
 }
 
+
 export const messageSchema = SchemaFactory.createForClass(Message);
 export const payloadSchema = SchemaFactory.createForClass(VoltMessage);

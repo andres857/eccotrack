@@ -89,6 +89,149 @@ export class DevicesService {
             console.log(error);
         }
     }
+
+    // VOLT Ligabue devices
+    async getLigabueDevices(){
+        return await this.sigFoxService.getDevicesLigabue();
+    }
+    
+    async getLigabueMessages(id){
+        const { data } = await this.sigFoxService.getMessageLigabue(id);
+        const messages = data.data.map( message => {
+            return {
+                id: message.device.id,
+                time: message.time,
+                data: message.data,
+                seqNumber: message.seqNumber,
+                lqi: message.lqi
+            }
+        });
+        const decodedmessages = await this.decodedMessagesDeviceTypeVolt(messages);
+        return decodedmessages;
+    }
+
+    // Volt Francois devices
+    async getFrancoisDevices(){
+        return await this.sigFoxService.getDevicesFrancois();
+    }
+
+    async getFrancoisMessages(id){
+        const { data } = await this.sigFoxService.getMessageFrancois(id);
+        const messages = data.data.map( message => {
+            return {
+                id: message.device.id,
+                time: message.time,
+                data: message.data,
+                seqNumber: message.seqNumber,
+                lqi: message.lqi
+            }
+        });
+        const decodedmessages = await this.decodedMessagesDeviceTypeVolt(messages);
+        return decodedmessages;
+    }
+
+    //  Volt Fernando Agrasar devices
+    async getFernandoDevices(){
+        return await this.sigFoxService.getDevicesFernando();
+    }
+
+    async getFernandoMessages(id){
+        const { data } = await this.sigFoxService.getMessageFernando(id);
+        const messages = data.data.map( message => {
+            return {
+                id: message.device.id,
+                time: message.time,
+                data: message.data,
+                seqNumber: message.seqNumber,
+                lqi: message.lqi
+            }
+        });
+        const decodedmessages = await this.decodedMessagesDeviceTypeVolt(messages);
+        return decodedmessages;
+    }
+    
+    // Volt Paolo Borghetti devices
+    async getPaoloDevices(){
+        return await this.sigFoxService.getDevicesPaolo();
+    }
+
+    async getPaoloMessages(id){
+        const { data } = await this.sigFoxService.getMessagePaolo(id);
+        const messages = data.data.map( message => {
+            return {
+                id: message.device.id,
+                time: message.time,
+                data: message.data,
+                seqNumber: message.seqNumber,
+                lqi: message.lqi
+            }
+        });
+        const decodedmessages = await this.decodedMessagesDeviceTypeVolt(messages);
+        return decodedmessages;
+    }
+    
+
+    // Volt José Marey devices
+    async getJoseDevices(){
+        return await this.sigFoxService.getDevicesJose();
+    }
+
+    async getJoseMessages(id){
+        const { data } = await this.sigFoxService.getMessageJose(id);
+        const messages = data.data.map( message => {
+            return {
+                id: message.device.id,
+                time: message.time,
+                data: message.data,
+                seqNumber: message.seqNumber,
+                lqi: message.lqi
+            }
+        });
+        const decodedmessages = await this.decodedMessagesDeviceTypeVolt(messages);
+        return decodedmessages;
+    }
+    
+
+    // Volt Stefano devices
+    async getStefanoDevices(){
+        return await this.sigFoxService.getDevicesStefano();
+    }
+
+    async getStefanoMessages(id){
+        const { data } = await this.sigFoxService.getMessageStefano(id);
+        const messages = data.data.map( message => {
+            return {
+                id: message.device.id,
+                time: message.time,
+                data: message.data,
+                seqNumber: message.seqNumber,
+                lqi: message.lqi
+            }
+        });
+        const decodedmessages = await this.decodedMessagesDeviceTypeVolt(messages);
+        return decodedmessages;
+    }
+
+    // Volt Telenext devices
+    async getTelenextDevices(){
+        return await this.sigFoxService.getDevicesTelenext();
+    }
+
+    async getTelenextMessages(id){
+        const { data } = await this.sigFoxService.getMessageTelenext(id);
+        const messages = data.data.map( message => {
+            return {
+                id: message.device.id,
+                time: message.time,
+                data: message.data,
+                seqNumber: message.seqNumber,
+                lqi: message.lqi
+            }
+        });
+        const decodedmessages = await this.decodedMessagesDeviceTypeVolt(messages);
+        return decodedmessages;
+    }
+
     // volt equal devices
     async getEqualDevices(){
         const devices = await this.sigFoxService.getDevicesEqual();
