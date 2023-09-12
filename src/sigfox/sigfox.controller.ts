@@ -6,10 +6,10 @@ import { SigfoxService } from './sigfox.service'
 export class SigfoxController {
   constructor( private sigFoxService: SigfoxService){}
 
-  @Get('/device/:id')
-  async locations(@Param('id') id:string){
-    const location = await this.sigFoxService.getLocationByIdDevice(id);
-    return location;
+  @Get('/devices')
+  async locations(){
+    const devices = await this.sigFoxService.getAccionaDevices();
+    return devices;
   }
 
   // equal volts
@@ -74,13 +74,6 @@ export class SigfoxController {
     return data;
   }
 
-
-  // @Get('/type/volt/devicetype')
-  // async getdeviceType(){
-  //   const { data } = await this.sigFoxService.getDeviceTypes();
-  //   return data;
-  // }
-
 // acciona devices
   @Post('callback')
   async handleSigfoxCallback( @Body() payload: any, @Query('time') time: any, @Query('seqNumber') seqNumber: any) {
@@ -92,6 +85,7 @@ export class SigfoxController {
     const newMessage = await this.sigFoxService.saveDataFromCallBack(payloadMessage);
     return newMessage;
   }
+
 
   // eallora devices
   @Post('volt/callback')
@@ -205,6 +199,24 @@ export class SigfoxController {
     console.log('+++++++paolo+++++++++++++');
     console.log(seqNumber, data, device, time, deviceTypeId);
     console.log('++++++++paolo++++++++++');
+    const payloadMessage = {
+      id: device,
+      time: time,
+      seqNumber: seqNumber,
+      data: data,
+    };
+    const rta = await this.sigFoxService.publishDataToEalloraPlatform(
+      payloadMessage,
+    );
+    return rta;
+  }
+
+  @Post('natallia_yatsuta/callback')
+  async handleSigfoxVoltCallbacknatallia_yatsuta(@Body() payload: any) {
+    const { seqNumber, data, device, time, deviceTypeId } = payload;
+    console.log('+++++++natallia_yatsuta+++++++++++++');
+    console.log(seqNumber, data, device, time, deviceTypeId);
+    console.log('++++++++natallia_yatsuta++++++++++');
     const payloadMessage = {
       id: device,
       time: time,

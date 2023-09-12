@@ -478,9 +478,14 @@ export class SigfoxService {
             console.error(error);
         }
     }
-
+    
     async getLocationByIdDevice(id){
         try {
+            console.log('location service', id);
+            console.log('credentials');
+            console.log(this.userSigFoxACCIONA);
+            console.log(this.passSigfoxACCIONA);
+            
             return await axios.get(`https://api.sigfox.com/v2/devices/${id}/locations`, {
                 auth: {
                   username: this.userSigFoxACCIONA,
@@ -488,7 +493,7 @@ export class SigfoxService {
                 },
               });
         } catch (error) {
-            console.log(error);      
+            console.log(error.message);      
         }
     }
 
