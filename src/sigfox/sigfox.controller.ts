@@ -6,72 +6,78 @@ import { SigfoxService } from './sigfox.service'
 export class SigfoxController {
   constructor( private sigFoxService: SigfoxService){}
 
-  @Get('/devices')
+  @Get('/devices/acciona')
   async locations(){
-    const devices = await this.sigFoxService.getAccionaDevices();
+    const devices = await this.sigFoxService.getAccionaDevicesTo();
     return devices;
   }
 
-  // equal volts
-  @Get('/devices/equal')
-  async geteletecno(){
-    const { data } = await this.sigFoxService.getDevicesEqual();
-    return data;
-  }
-// shop-online volts
-  @Get('/devices/shop-online')
-  async getVolts(){
-    const { data } = await this.sigFoxService.getDevicesShopOnline();
+  @Get('/devices/tecnogym')
+  async gettecnogym(){
+    const data = await this.sigFoxService.getDevicesTecnoGYM();
     return data;
   }
 
-  // ligabue volts
-  @Get('/devices/ligabue')
-  async getligabue(){
-    const { data } = await this.sigFoxService.getDevicesLigabue();
-    return data;
+// tecnogym devices
+  @Post('callback/uplink/tecnogym01')
+  async handleSigfoxTecnoGym_001UplinkCallback(@Body() payload: any) {
+      console.log('+++++++++tecnogym01-Uplink+++++++++++');      
+      console.log(payload);
+      console.log('++++++++++tecnogym01-Uplink++++++++++++++');
   }
 
-  // francois volts
-  @Get('/devices/francois')
-  async getfrancois(){
-    const { data } = await this.sigFoxService.getDevicesFrancois();
-    return data;
+  @Post('callback/status/tecnogym01')
+  async handleSigfoxTecnoGym_001StatusCallback(@Body() payload: any) {
+      console.log('+++++++++tecnogym01-Status+++++++++++');      
+      console.log(payload);
+      console.log('++++++++++tecnogym01-Status++++++++++++++');
   }
 
-  // stefano volts
-  @Get('/devices/stefano')
-  async getstefano(){
-    const { data } = await this.sigFoxService.getDevicesStefano();
-    return data;
+  // tecnogym devices
+  @Post('callback/repeater/tecnogym01')
+  async handleSigfoxTecnoGym_001RepeaterCallback(@Body() payload: any) {
+      console.log('+++++++++tecnogym01-Repeater+++++++++++');      
+      console.log(payload);
+      console.log('++++++++++tecnogym01-Repeater++++++++++++++');
   }
 
-  // jose volts
-  @Get('/devices/jose')
-  async getjose(){
-    const { data } = await this.sigFoxService.getDevicesJose();
-    return data;
-  }
-  
-  // Telenext volts
-  @Get('/devices/telenext')
-  async gettelenext(){
-    const { data } = await this.sigFoxService.getDevicesTelenext();
-    return data;
+  // tecnogym devices
+  @Post('callback/da/tecnogym01')
+  async handleSigfoxTecnoGym_001DataAdvanceCallback(@Body() payload: any) {
+      console.log('+++++++++tecnogym01-DataAdvance+++++++++++');      
+      console.log(payload);
+      console.log('++++++++++tecnogym01-DataAdvance++++++++++++++');
   }
 
-  // Fernando Agrasar volts
-  @Get('/devices/fernando')
-  async getfernando(){
-    const { data } = await this.sigFoxService.getDevicesFernando();
-    return data;
+  // tecnogym group 2 devices
+  @Post('callback/uplink/tecnogym02')
+  async handleSigfoxTecnoGym_002UplinkCallback(@Body() payload: any) {
+      console.log('+++++++++tecnogym02-Uplink+++++++++++');      
+      console.log(payload);
+      console.log('++++++++++tecnogym02-Uplink++++++++++++++');
   }
 
-  // Paolo Borghetti volts
-  @Get('/devices/paolo')
-  async getpaolo(){
-    const { data } = await this.sigFoxService.getDevicesPaolo();
-    return data;
+  @Post('callback/status/tecnogym02')
+  async handleSigfoxTecnoGym_002StatusCallback(@Body() payload: any) {
+      console.log('+++++++++tecnogym02-Status+++++++++++');      
+      console.log(payload);
+      console.log('++++++++++tecnogym02-Status++++++++++++++');
+  }
+
+  // tecnogym devices
+  @Post('callback/repeater/tecnogym02')
+  async handleSigfoxTecnoGym_002RepeaterCallback(@Body() payload: any) {
+      console.log('+++++++++tecnogym02-Repeater+++++++++++');      
+      console.log(payload);
+      console.log('++++++++++tecnogym02-Repeater++++++++++++++');
+  }
+
+  // tecnogym devices
+  @Post('callback/da/tecnogym02')
+  async handleSigfoxTecnoGym_002DataAdvanceCallback(@Body() payload: any) {
+      console.log('+++++++++tecnogym02-DataAdvance+++++++++++');      
+      console.log(payload);
+      console.log('++++++++++tecnogym02-DataAdvance++++++++++++++');
   }
 
 // acciona devices
@@ -85,7 +91,6 @@ export class SigfoxController {
     const newMessage = await this.sigFoxService.saveDataFromCallBack(payloadMessage);
     return newMessage;
   }
-
 
   // eallora devices
   @Post('volt/callback')
@@ -174,7 +179,6 @@ export class SigfoxController {
     return rta;
   }
 
-  
   @Post('volt_fernando_agrasar/callback')
   async handleSigfoxVoltCallbackFernando(@Body() payload: any) {
     const { seqNumber, data, device, time, deviceTypeId } = payload;
@@ -282,21 +286,4 @@ export class SigfoxController {
     const rta = await this.sigFoxService.publishDataToEqualPlatform(payloadMessage);
     return rta;
   }
-  
-  // @Post('voltcfl/callback')
-  // async handleSigfoxVoltCFL( 
-  //     @Body() payload: any,
-  //   ) {
-  //     console.log('++++++++cfl++++++++++++');
-  //     const {seqNumber, data, device, time, deviceTypeId} = payload;
-  //     console.log(seqNumber, data, device, time, deviceTypeId);
-  //     console.log('+++++++++cfl+++++++++++++++');
-  //   const payloadMessage = {
-  //     id: device,
-  //     time: time,
-  //     seqNumber: seqNumber,
-  //     data: data
-  //   };
-  //   return payloadMessage;
-  // }
 }

@@ -11,471 +11,51 @@ const https = require('https');
 export class SigfoxService {
     private userSigFoxACCIONA: string;
     private passSigfoxACCIONA: string;
-    private userSigFoxVOLT: string;
-    private passSigfoxVOLT: string;
-    private userSigFoxEQUAL: string;
-    private passSigfoxEQUAL: string;
-    private userSigFoxAIRNEX: string;
-    private passSigfoxAIRNEX: string;
-    private userSigFoxCFL: string;
-    private passSigfoxCFL: string;
-    private urlEalloraDEV: string;
     private urlEalloraPROD: string;
-    private userSigFoxLigabue: string;
-    private passSigfoxLigabue: string;
-    private userSigFoxFRANCOIS: string;
-    private passSigfoxFRANCOIS: string;
-    private userSigFoxSTEFANO: string;
-    private passSigfoxSTEFANO: string;
-    private userSigfoxTELENEXT: string;
-    private passSigfoxTELENEXT: string;
-    private usserSigfoxJOSE: string;
-    private passSigfoxJOSE: string;
-    private userSigFoxFERNANDO: string;
-    private passSigfoxFERNANDO: string;
-    private userSigFoxPAOLO: string;
-    private passSigfoxPAOLO: string;
-    
+    private passSigfoxTECNOGYM: string;
+    private userSigFoxTECNOGYM: string;
 
     constructor( 
         private messageService: MessagesService,
         private sharedService: SharedService,
-        private voltService: VoltService,
     ){
-        // route api eallora
-        this.urlEalloraDEV = process.env.URL_EALLORA_DEV;
-        this.urlEalloraPROD = process.env.URL_EALLORA_PROD;
-
+        this.userSigFoxTECNOGYM = process.env.USERNAMETECNOGYM;
+        this.passSigfoxTECNOGYM = process.env.PASSWORDTECNOGYM;
         this.userSigFoxACCIONA = process.env.USERNAMEACCIONA;
         this.passSigfoxACCIONA = process.env.PASSWORDACCIONA;
-        this.userSigFoxVOLT = process.env.USERNAMEVOLT;
-        this.passSigfoxVOLT = process.env.PASSWORDVOLT;
-        this.userSigFoxEQUAL = process.env.USERNAMEEQUAL;
-        this.passSigfoxEQUAL = process.env.PASSWORDEQUAL;
-        this.userSigFoxAIRNEX = process.env.USERNAMEAIRNEX;
-        this.passSigfoxAIRNEX = process.env.PASSWORDAIRNEX;
-        this.userSigFoxCFL = process.env.USERNAMECFL;
-        this.passSigfoxCFL = process.env.PASSWORDCFL;
-        this.userSigFoxLigabue = process.env.USERNAMELIGABUE;
-        this.passSigfoxLigabue = process.env.PASSWORDLIGABUE;
-        this.userSigFoxFRANCOIS = process.env.USERNAMEFRANCOIS;
-        this.passSigfoxFRANCOIS = process.env.PASSWORDFRANCOIS;
-        this.userSigFoxSTEFANO = process.env.USERNAMESTEFANO;
-        this.passSigfoxSTEFANO = process.env.PASSWORDSTEFANO;
-        this.userSigfoxTELENEXT = process.env.USERNAMETELENEXT;
-        this.passSigfoxTELENEXT = process.env.PASSWORDTELENEXT;
-        this.usserSigfoxJOSE = process.env.USERNAMEJOSE;
-        this.passSigfoxJOSE = process.env.PASSWORDJOSE;
-        this.userSigFoxFERNANDO = process.env.USERNAMEFERNANDO;
-        this.passSigfoxFERNANDO = process.env.PASSWORDFERNANDO;
-        this.userSigFoxPAOLO = process.env.USERNAMEPAOLO;
-        this.passSigfoxPAOLO = process.env.PASSWORDPAOLO;
+        // route api eallora
+        this.urlEalloraPROD = process.env.URL_EALLORA_PROD;
     }
-    // DEVICES TYPE - VOLT equal
-    async getDevicesEqual(){
+    //Get all devices Tecnogym
+    async getDevicesTecnoGYM(){
         try {
             const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
                 auth:{
-                    username: this.userSigFoxEQUAL,
-                    password: this.passSigfoxEQUAL,
+                    username: this.userSigFoxTECNOGYM,
+                    password: this.passSigfoxTECNOGYM,
                 }
-            });            
-            const devices = data.data.map( item =>{
-                return {
-                    id: item.id,
-                    name: item.name,
-                    comState: item.comState,
-                    lqi: item.lqi,
-                }
-            })
-            return devices;
+            });
+            console.log(data.data);
+            
+            const devicesCount = data.data.length;
+            console.log(devicesCount);
+            return data.data;
         } catch (error) {
             console.error(error);
         }
     }
-
-    async getMessageEqual(id){
-        try {
-            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
-                auth:{
-                    username: this.userSigFoxEQUAL,
-                    password: this.passSigfoxEQUAL,
-                }
-            });
-        } catch (error) {            
-            console.log(error.message);
-            return error;
-        }
-    }
-    // DEVICES TYPE - VOLT shop-online
-    async getDevicesShopOnline(){
-        try {
-            return await axios.get('https://api.sigfox.com/v2/devices', {
-                auth:{
-                    username: this.userSigFoxAIRNEX,
-                    password: this.passSigfoxAIRNEX,
-                }
-            });
-        } catch (error) {
-            console.log('hola mundo');
-            console.error(error);
-        }
-    }
-
-    async getMessageShopOnline(id){
-        try {
-            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
-                auth:{
-                    username: this.userSigFoxVOLT,
-                    password: this.passSigfoxVOLT,
-                }
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    // DEVICES TYPE - VOLT Fernando Agrasar
-    async getDevicesFernando(){
-        try {
-            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
-                auth:{
-                    username: this.userSigFoxFERNANDO,
-                    password: this.passSigfoxFERNANDO,
-                }
-            });
-            const devices = data.data.map( item =>{
-                return {
-                    id: item.id,
-                    name: item.name,
-                    comState: item.comState,
-                    lqi: item.lqi,
-                }
-            })
-            return devices;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async getMessageFernando(id){
-        try {
-            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
-                auth:{
-                    username: this.userSigFoxFERNANDO,
-                    password: this.passSigfoxFERNANDO,
-                }
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    }
-    
-    // Devices type - VOLT José Marey
-    async getDevicesJose(){
-        try {
-            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
-                auth:{
-                    username: this.usserSigfoxJOSE,
-                    password: this.passSigfoxJOSE,
-                }
-            });
-            const devices = data.data.map( item =>{
-                return {
-                    id: item.id,
-                    name: item.name,
-                    comState: item.comState,
-                    lqi: item.lqi,
-                }
-            })
-            return devices;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-    
-    async getMessageJose(id){
-        try {
-            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
-                auth:{
-                    username: this.usserSigfoxJOSE,
-                    password: this.passSigfoxJOSE,
-                }
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-
-    //  DEVICES TYPE - VOLT Sig. Ligabue
-    async getDevicesLigabue(){
-        try {
-            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
-                auth:{
-                    username: this.userSigFoxLigabue,
-                    password: this.passSigfoxLigabue,
-                }
-            });            
-            const devices = data.data.map( item =>{
-                return {
-                    id: item.id,
-                    name: item.name,
-                    comState: item.comState,
-                    lqi: item.lqi,
-                }
-            })
-            return devices;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async getMessageLigabue(id){
-        try {
-            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
-                auth:{
-                    username: this.userSigFoxLigabue,
-                    password: this.passSigfoxLigabue,
-                }
-            });
-        } catch (error) {            
-            console.log(error.message);
-            return error;
-        }
-    }
-
-    // DEVICES TYPE - VOLT Sig. Paolo Borghetti
-    async getDevicesPaolo(){
-        try {
-            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
-                auth:{
-                    username: this.userSigFoxPAOLO,
-                    password: this.passSigfoxPAOLO,
-                }
-            });
-            const devices = data.data.map( item =>{
-                return {
-                    id: item.id,
-                    name: item.name,
-                    comState: item.comState,
-                    lqi: item.lqi,
-                }
-            })
-            return devices;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async getMessagePaolo(id){
-        try {
-            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
-                auth:{
-                    username: this.userSigFoxPAOLO,
-                    password: this.passSigfoxPAOLO,
-                }
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    // DEVICES TYPE - VOLT Sig. Francois
-    async getDevicesFrancois(){
-        try {
-            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
-                auth:{
-                    username: this.userSigFoxFRANCOIS,
-                    password: this.passSigfoxFRANCOIS,
-                }
-            });
-            const devices = data.data.map( item =>{
-                return {
-                    id: item.id,
-                    name: item.name,
-                    comState: item.comState,
-                    lqi: item.lqi,
-                }
-            });
-            return devices;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async getMessageFrancois(id){
-        try {
-            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
-                auth:{
-                    username: this.userSigFoxFRANCOIS,
-                    password: this.passSigfoxFRANCOIS,
-                }
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    }
-    
-    // DEVICES TYPE - VOLT Sig. Stefano
-    async getDevicesStefano(){
-        try {
-            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
-                auth:{
-                    username: this.userSigFoxSTEFANO,
-                    password: this.passSigfoxSTEFANO,
-                }
-            });
-            const devices = data.data.map( item =>{
-                return {
-                    id: item.id,
-                    name: item.name,
-                    comState: item.comState,
-                    lqi: item.lqi,
-                }
-            });
-            return devices;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async getMessageStefano(id){
-        try {
-            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
-                auth:{
-                    username: this.userSigFoxSTEFANO,
-                    password: this.passSigfoxSTEFANO,
-                }
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    }
-    
-    // DEVICES TYPE - VOLT Sig. Telenext
-    async getDevicesTelenext(){
-        try{
-            const { data } = await axios.get('https://api.sigfox.com/v2/devices', {
-                auth: {
-                    username: this.userSigfoxTELENEXT,
-                    password: this.passSigfoxTELENEXT,
-                }
-            });
-            const devices = data.data.map( item =>{
-                return {
-                    id: item.id,
-                    name: item.name,
-                    comState: item.comState,
-                    lqi: item.lqi,
-                }
-            });
-            return devices;
-        }
-        catch(error){
-            console.error(error);
-        }
-    }
-
-    async getMessageTelenext(id){
-        try{
-            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
-                auth: {
-                    username: this.userSigfoxTELENEXT,
-                    password: this.passSigfoxTELENEXT,
-                }
-            });
-        }
-        catch(error){
-            console.log(error);
-        }
-    }
-    
-    // DEVICES TYPE - VOLT AIRNEX
-    async getDevicesAIRNEX(){
-        try {
-            return await axios.get('https://api.sigfox.com/v2/devices', {
-                auth:{
-                    username: this.userSigFoxAIRNEX,
-                    password: this.passSigfoxAIRNEX,
-                }
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    }
-    async getMessageAIRNEX(id){
-        try {
-            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
-                auth:{
-                    username: this.userSigFoxAIRNEX,
-                    password: this.passSigfoxAIRNEX,
-                }
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    // DEVICES TYPE - VOLT CFL
-    async getDevicesCFL(){
-        try {
+    //Get all devices Eccotrack
+    async getAccionaDevicesTo(){
+       try {
             const {data} = await axios.get('https://api.sigfox.com/v2/devices', {
-                auth:{
-                    username: this.userSigFoxCFL,
-                    password: this.passSigfoxCFL,
-                }
-            });
-            const devices = data.data.map( item =>{
-                return {
-                    id: item.id,
-                    name: item.name,
-                    comState: item.comState,
-                    lqi: item.lqi,
-                }
-            })            
-            return devices;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-    async getMessageCFL(id){
-        try {
-            return await axios.get(`https://api.sigfox.com/v2/devices/${id}/messages`, {
-                auth:{
-                    username: this.userSigFoxCFL,
-                    password: this.passSigfoxCFL,
-                }
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    // async getDeviceTypes(){
-    //     try {
-    //         return await axios.get(`https://api.sigfox.com/v2/device-types`, {
-    //             auth:{
-    //                 username: this.userSigFoxVOLT,
-    //                 password: this.passSigfoxVOLT,
-    //             }
-    //         });
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
-
-    //get all devices Eccotrack
-    async getAccionaDevices(){
-        try {
-            return await axios.get('https://api.sigfox.com/v2/devices', {
                 auth:{
                     username: this.userSigFoxACCIONA,
                     password: this.passSigfoxACCIONA,
                 }
             });
+            return data;
         } catch (error) {
-            console.error(error);
+            console.error(error.message);
         }
     }
     
@@ -510,11 +90,6 @@ export class SigfoxService {
     async saveDataFromCallBack(payload: any) {
         const newMessage = await this.messageService.create(payload);
         const dataUpdate = await this.sharedService.updateLastSeenOnDevices(payload);
-        // console.log(newMessage);
-        console.log('data-update');
-        // console.log(dataUpdate);
-        console.log('data-update/');
-        // return newMessage;
     }
 
     async saveDataFromCallBackVolt(payload: any) {
@@ -565,9 +140,7 @@ export class SigfoxService {
         // calcula el porcentaje de batería
         const batteryCoded = dataRaw.slice(-2);
         const battery = (parseInt(batteryCoded, 16));
-        
-        // const battery = ((parseInt(batteryCoded, 16) * 0.05) + 1.45).toFixed(2);
-        
+                
         // calcula la temperatura
         const temperatureCoded = dataRaw.slice(-6, -2);
         const temperatureDecimal = parseInt(temperatureCoded, 16);
