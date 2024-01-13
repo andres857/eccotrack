@@ -6,9 +6,9 @@ import * as fs from 'fs';
 async function bootstrap() {
 
   const httpsOptions = {
-    key: fs.readFileSync('/usr/src/app/certs-eccotrack/privkey.pem', 'utf8'),
-    cert: fs.readFileSync('/usr/src/app/certs-eccotrack/cert.pem', 'utf8'),
-    ca: fs.readFileSync('/usr/src/app/certs-eccotrack/chain.pem', 'utf8'),
+    key: fs.readFileSync('/usr/src/app/ssl-certs/privkey.pem', 'utf8'),
+    cert: fs.readFileSync('/usr/src/app/ssl-certs/cert.pem', 'utf8'),
+    ca: fs.readFileSync('/usr/src/app/ssl-certs/chain.pem', 'utf8'),
   }
 
   const app = await NestFactory.create(AppModule, {
